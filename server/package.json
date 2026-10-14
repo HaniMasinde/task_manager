@@ -1,0 +1,38 @@
+{
+  "name": "daily_task_manager",
+  "version": "1.0.0",
+  "description": "a server-side for a task manager app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HaniMasinde/task_manager.git"
+  },
+  "author": "haningtone omondi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HaniMasinde/task_manager/issues"
+  },
+  "homepage": "https://github.com/HaniMasinde/task_manager#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "connect-pg-simple": "^10.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.7",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "express-session": "^1.19.0",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.3.0",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "eslint": "^10.12.0",
+    "nodemon": "^1.14.10"
+  }
+}

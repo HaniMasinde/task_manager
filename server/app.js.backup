@@ -1,0 +1,46 @@
+
+const express = require('express');
+const helmet = require('helmet');
+
+const sessionMiddleware = require('./src/config/session');
+const taskRoutes = require('./src/routes/taskRoutes');
+const authMiddleware = require('./src/middleware/authMiddleware');
+const errorMiddleware = require('./src/middleware/errorMiddleware');
+const authRoutes = require('./src/routes/authRoutes');
+
+const app = express();
+
+app.use(helmet());
+
+// Parse incoming JSON request bodies
+app.use(express.json());
+
+// Parse URL-encoded form data
+app.use(express.urlencoded({ extended: true }));
+
+// Mount the authentication routes
+
+// Initialize server-side sessions
+app.use(sessionMiddleware);
+
+// Mount the task routes with authentication middleware
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', authMiddleware, taskRoutes);
+app.use(errorMiddleware);
+
+
+// Basic API health check
+app.get('/api/health', (req, res) => {
+    res.status(200).json({
+        status: 'success',
+        message: 'Daily Task Manager API is running',
+    });
+});
+
+// Protect all task operations
+app.use('/api/tasks', authMiddleware, taskRoutes);
+
+// Centralized error handling — keep this last
+app.use(errorMiddleware);
+
+module.exports = app;
