@@ -11,10 +11,17 @@ const authRoutes = require('./src/routes/authRoutes');
 
 const app = express();
 
-// Allow requests from the local React development server.
-// Credentials are required for cookie-based sessions.
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+// Allow the local frontend and the deployed frontend.
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.CLIENT_ORIGIN,
+].filter(Boolean);
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: allowedOrigins,
   credentials: true,
 }));
 
