@@ -1,7 +1,6 @@
+require('dotenv').config();
 
-require('dotenv').config()
-
-const {Pool} = require('pg');
+const { Pool } = require('pg');
 
 const pool = new Pool({
   host: process.env.DB_HOST,
@@ -9,9 +8,15 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-});
-pool.on('error',(error)=>{
-  console.error('Unexpected Postgresql error',error.message)
-})
 
-module.exports = pool
+  // Require an encrypted connection to PostgreSQL
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
+pool.on('error', (error) => {
+  console.error('Unexpected PostgreSQL error', error.message);
+});
+
+module.exports = pool;
