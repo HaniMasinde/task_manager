@@ -18,9 +18,6 @@ const socialLinks = [
 function SiteFooter() {
   return (
     <footer className="app-footer">
-      <p className="footer-credit">
-        Developed and designed by :: <strong>Haningtone Omondi</strong>
-      </p>
       <nav className="footer-socials" aria-label="Social media and contact">
         {socialLinks.map(({ label, href, icon: Icon }) => (
           <a

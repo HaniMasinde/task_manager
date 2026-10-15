@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import TasksPage from './pages/TasksPage.jsx'
+import AccountPage from './pages/AccountPage.jsx'
 import SiteFooter from './components/SiteFooter.jsx'
 import './App.css'
 
@@ -49,6 +50,7 @@ function App() {
 
             <Route element={<ProtectedRoute />}>
               <Route path="/tasks" element={<TasksPage />} />
+              <Route path="/account" element={<AccountPage />} />
             </Route>
           </Routes>
         </div>

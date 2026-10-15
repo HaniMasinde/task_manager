@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { FiSettings } from 'react-icons/fi'
 import { useAuth } from '../context/useAuth.js'
 import {
   getTasks,
@@ -19,8 +20,8 @@ function getLocalDateString() {
 }
 
 function TasksPage() {
-  const { user, logout, loading } = useAuth()
-  const navigate = useNavigate()
+  const { user, loading } = useAuth()
+  const firstName = user?.name?.trim().split(/\s+/)[0] || user?.username || ''
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [dueDate, setDueDate] = useState('')
@@ -38,7 +39,6 @@ function TasksPage() {
   const [tasks, setTasks] = useState([])
   const [tasksLoading, setTasksLoading] = useState(true)
   const [error, setError] = useState('')
-  const [loggingOut, setLoggingOut] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [deleteError, setDeleteError] = useState('')
   const [deletingTask, setDeletingTask] = useState(false)
@@ -238,20 +238,6 @@ function TasksPage() {
     }
   }
 
-  async function handleLogout() {
-    setError('')
-    setLoggingOut(true)
-
-    try {
-      await logout()
-      navigate('/login', { replace: true })
-    } catch {
-      setError('Logout failed. Please try again.')
-    } finally {
-      setLoggingOut(false)
-    }
-  }
-
   if (loading) {
     return <main className="auth-page">Checking session...</main>
   }
@@ -265,17 +251,10 @@ function TasksPage() {
       <div className="task-dashboard">
         <header className="task-heading">
             <p>
-              Welcome, <span className="task-user-name">{user.name}</span>.
+              Welcome, <span className="task-user-name">{firstName}</span>.
             </p>
           <h1>My Tasks</h1>
-          <button
-            className="primary-button logout-button"
-            type="button"
-            onClick={handleLogout}
-            disabled={loggingOut}
-          >
-            {loggingOut ? 'Signing out...' : 'Log out'}
-          </button>
+          <Link className="account-settings-link" to="/account" aria-label="Account settings" title="Account settings"><FiSettings aria-hidden="true" /></Link>
         </header>
 
         <section
