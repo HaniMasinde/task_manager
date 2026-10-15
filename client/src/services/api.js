@@ -10,16 +10,21 @@ async function apiRequest(endpoint, options = {}) {
     },
   });
 
-  let data;
+  const responseText = await response.text();
+  let data = {};
 
-  try {
-    data = await response.json();
-  } catch {
-    data = {};
+  if (responseText) {
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      data = {};
+    }
   }
 
   if (!response.ok) {
-    throw new Error(data.message || 'API request failed');
+    const message = data.message || data.error || responseText.trim() ||
+      `Request failed (${response.status}${response.statusText ? ` ${response.statusText}` : ''}).`;
+    throw new Error(message);
   }
 
   return data;

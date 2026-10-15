@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FiSettings } from 'react-icons/fi'
+import { FiSettings, FiUser } from 'react-icons/fi'
 import { useAuth } from '../context/useAuth.js'
 import {
   getTasks,
@@ -250,8 +250,11 @@ function TasksPage() {
     <main className="auth-page task-page">
       <div className="task-dashboard">
         <header className="task-heading">
-            <p>
-              Welcome, <span className="task-user-name">{firstName}</span>.
+            <p className="task-heading-welcome">
+              {user.profile_picture
+                ? <img className="task-profile-picture" src={user.profile_picture} alt={`${firstName}'s profile`} />
+                : <span className="task-profile-picture task-profile-picture-fallback" aria-hidden="true"><FiUser /></span>}
+              <span>Welcome, <span className="task-user-name">{firstName}</span>.</span>
             </p>
           <h1>My Tasks</h1>
           <Link className="account-settings-link" to="/account" aria-label="Account settings" title="Account settings"><FiSettings aria-hidden="true" /></Link>
