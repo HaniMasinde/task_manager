@@ -3625,3 +3625,69 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
   .home-sidebar { transition: none; }
   .home-sidebar-backdrop { animation: none; }
 }
+
+/* Home page motion: gentle entrances, a lively brand mark, and a calm timer pulse. */
+.home-portal-header { animation: home-enter-up 460ms cubic-bezier(.2,.75,.25,1) both; }
+.home-focus-hero { animation: home-enter-up 560ms cubic-bezier(.2,.75,.25,1) 70ms both; }
+.home-focus-card { animation: home-enter-up 600ms cubic-bezier(.2,.75,.25,1) 140ms both; }
+.home-intention-card { animation: home-enter-up 600ms cubic-bezier(.2,.75,.25,1) 220ms both; }
+.home-focus-tip { animation: home-enter-up 600ms cubic-bezier(.2,.75,.25,1) 300ms both; }
+.home-sidebar-brand-mark {
+  animation: home-logo-float 3.4s ease-in-out infinite;
+  transform-origin: center;
+}
+.home-sidebar-brand:hover .home-sidebar-brand-mark,
+.landing-page .brand:hover .brand-mark { animation-duration: 800ms; }
+.landing-page .brand-mark::after { animation: home-logo-spark 2.4s ease-in-out infinite; }
+.home-focus-clock.is-running { animation: home-focus-breathe 2.6s ease-in-out infinite; }
+.home-focus-start:active { transform: translateY(1px) scale(.98); }
+.home-mobile-menu-toggle svg { transition: transform 180ms ease; }
+.home-mobile-menu-toggle:active svg { transform: scale(.88); }
+.landing-page .hero-preview { animation: landing-preview-float 6s ease-in-out infinite; }
+.landing-page .landing-visual-orb-one { animation: landing-orb-drift 9s ease-in-out infinite alternate; }
+.landing-page .landing-visual-orb-two { animation: landing-orb-drift 7s ease-in-out infinite alternate-reverse; }
+.landing-float-card { animation: landing-card-float 4s ease-in-out infinite; }
+@keyframes home-enter-up {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes home-logo-float {
+  0%, 100% { box-shadow: 0 4px 11px rgb(91 72 106 / 20%); transform: translateY(0) rotate(0); }
+  50% { box-shadow: 0 8px 18px rgb(91 72 106 / 31%); transform: translateY(-2px) rotate(-3deg); }
+}
+@keyframes home-logo-spark {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(.72); opacity: .68; }
+}
+@keyframes home-focus-breathe {
+  0%, 100% { box-shadow: inset 0 0 0 1px #d4c1dc, 0 0 0 5px rgb(166 132 177 / 7%), 0 12px 30px rgb(107 77 117 / 12%); }
+  50% { box-shadow: inset 0 0 0 1px #c3a9ce, 0 0 0 10px rgb(166 132 177 / 12%), 0 12px 34px rgb(107 77 117 / 16%); }
+}
+@keyframes landing-preview-float {
+  0%, 100% { transform: translateY(0) rotate(1.2deg); }
+  50% { transform: translateY(-7px) rotate(.6deg); }
+}
+@keyframes landing-orb-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(8px, -10px, 0) scale(1.035); }
+}
+@keyframes landing-card-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-portal-header,
+  .home-focus-hero,
+  .home-focus-card,
+  .home-intention-card,
+  .home-focus-tip,
+  .home-sidebar-brand-mark,
+  .landing-page .brand-mark::after,
+  .home-focus-clock.is-running,
+  .landing-page .hero-preview,
+  .landing-page .landing-visual-orb-one,
+  .landing-page .landing-visual-orb-two,
+  .landing-float-card { animation: none !important; }
+  .home-mobile-menu-toggle svg,
+  .home-focus-start { transition: none; }
+}
