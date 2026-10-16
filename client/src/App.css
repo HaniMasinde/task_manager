@@ -3574,13 +3574,12 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
     animation: home-backdrop-in 160ms ease both;
   }
   .home-sidebar {
-    position: fixed;
+    position: fixed !important;
     z-index: 1001;
-    top: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0 auto 0 0;
     display: flex;
-    width: min(290px, 86vw);
+    width: min(270px, 78vw);
+    max-width: 270px;
     height: 100vh;
     height: 100dvh;
     min-height: 0;
@@ -3593,12 +3592,12 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
     border-right: 1px solid #e8e0e9;
     border-radius: 0 20px 20px 0;
     box-shadow: 12px 0 32px rgb(27 20 32 / 16%);
-    transform: translateX(-105%);
+    transform: translate3d(-105%, 0, 0);
     visibility: hidden;
     pointer-events: none;
     transition: transform 230ms ease, visibility 230ms;
   }
-  .home-sidebar.is-mobile-open { transform: translateX(0); visibility: visible; pointer-events: auto; }
+  .home-sidebar.is-mobile-open { transform: translate3d(0, 0, 0); visibility: visible; pointer-events: auto; }
   .home-sidebar-brand { flex: 0 0 auto; padding: 2px 6px 24px; font-size: .92rem; }
   .home-sidebar-brand-mark { width: 37px; height: 37px; font-size: 1.3rem; }
   .home-sidebar-section-label { display: block; margin: 0 0 8px; padding: 0 9px; }
