@@ -48,10 +48,14 @@ function AccountPage() {
   const [passwordError, setPasswordError] = useState('')
   const [accessError, setAccessError] = useState('')
   const [showDelete, setShowDelete] = useState(false)
-  const [busy, setBusy] = useState(false)
+  const [busyActions, setBusyActions] = useState({ profile: false, password: false, logout: false, delete: false })
   const [picture, setPicture] = useState(user?.profile_picture || '')
   const [pictureError, setPictureError] = useState('')
   const [deletePassword, setDeletePassword] = useState('')
+
+  function setActionBusy(action, busy) {
+    setBusyActions((current) => ({ ...current, [action]: busy }))
+  }
 
   function handlePictureChange(event) {
     const file = event.target.files?.[0]
@@ -77,7 +81,13 @@ function AccountPage() {
     if (!profile.name.trim() || !profile.email.trim()) {
       return
     }
-    setBusy(true)
+    const hasProfileChanges =
+      profile.name.trim() !== (user?.name || user?.username || '').trim() ||
+      profile.email.trim().toLowerCase() !== (user?.email || '').trim().toLowerCase() ||
+      (picture || null) !== (user?.profile_picture || null)
+    if (!hasProfileChanges) return
+
+    setActionBusy('profile', true)
     try {
       const updatedUser = await updateProfile({
         name: profile.name.trim(),
@@ -95,7 +105,7 @@ function AccountPage() {
       }
       // Profile save errors stay text-free unless the image exceeds the size limit.
     } finally {
-      setBusy(false)
+      setActionBusy('profile', false)
     }
   }
 
@@ -111,7 +121,7 @@ function AccountPage() {
       setPasswordError('The new passwords do not match.')
       return
     }
-    setBusy(true)
+    setActionBusy('password', true)
     try {
       await updatePassword({ currentPassword: passwords.current, newPassword: passwords.next })
       setPasswords({ current: '', next: '', confirm: '' })
@@ -119,12 +129,12 @@ function AccountPage() {
     } catch (requestError) {
       setPasswordError(requestError.message || 'Could not update your password.')
     } finally {
-      setBusy(false)
+      setActionBusy('password', false)
     }
   }
 
   async function handleLogout() {
-    setBusy(true)
+    setActionBusy('logout', true)
     setAccessError('')
     try {
       await logout()
@@ -132,12 +142,12 @@ function AccountPage() {
     } catch {
       setAccessError('Could not log out. Please try again.')
     } finally {
-      setBusy(false)
+      setActionBusy('logout', false)
     }
   }
 
   async function handleDelete() {
-    setBusy(true)
+    setActionBusy('delete', true)
     setAccessError('')
     try {
       await deleteAccount(deletePassword)
@@ -146,7 +156,7 @@ function AccountPage() {
     } catch (requestError) {
       setAccessError(requestError.message || 'Could not delete your account.')
     } finally {
-      setBusy(false)
+      setActionBusy('delete', false)
     }
   }
 
@@ -187,7 +197,7 @@ function AccountPage() {
             <label htmlFor="account-email">Email address</label>
             <input id="account-email" type="email" autoComplete="email" value={profile.email} onChange={(event) => setProfile({ ...profile, email: event.target.value })} required />
             <PasswordField id="profile-current-password" label={<>Current password <span className="account-optional-hint">(required to change email)</span></>} value={profile.currentPassword} onChange={(event) => setProfile({ ...profile, currentPassword: event.target.value })} autoComplete="current-password" />
-            <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Saving...' : 'Save profile'}</button>
+            <button className="primary-button" type="submit" disabled={busyActions.profile}>{busyActions.profile ? 'Saving...' : 'Save profile'}</button>
           </form>
         </section>
 
@@ -198,14 +208,14 @@ function AccountPage() {
             <PasswordField id="new-password" label="New password" autoComplete="new-password" value={passwords.next} onChange={(event) => setPasswords({ ...passwords, next: event.target.value })} minLength={8} required />
             <PasswordField id="confirm-password" label="Confirm new password" autoComplete="new-password" value={passwords.confirm} onChange={(event) => setPasswords({ ...passwords, confirm: event.target.value })} minLength={8} required />
             {passwordError && <p className="form-error" role="alert">{passwordError}</p>}
-            <button className="primary-button" type="submit" disabled={busy}>{busy ? 'Updating…' : 'Update password'}</button>
+            <button className="primary-button" type="submit" disabled={busyActions.password}>{busyActions.password ? 'Updating…' : 'Update password'}</button>
           </form>
         </section>
 
         <section className="account-card account-actions-card" aria-labelledby="security-heading">
           <div className="account-card-heading"><div><h2 id="security-heading">Account access</h2><p>Sign out on this device or permanently delete your account and tasks.</p></div></div>
           <div className="account-access-actions">
-            <button className="secondary-button" type="button" onClick={handleLogout} disabled={busy}><FiLogOut aria-hidden="true" /> {busy ? 'Signing out…' : 'Log out'}</button>
+            <button className="secondary-button" type="button" onClick={handleLogout} disabled={busyActions.logout}><FiLogOut aria-hidden="true" /> {busyActions.logout ? 'Signing out…' : 'Log out'}</button>
             <button className="danger-button" type="button" onClick={() => { setAccessError(''); setShowDelete(true) }}><FiTrash2 aria-hidden="true" /> Delete account</button>
           </div>
           {accessError && !showDelete && <p className="form-error account-access-error" role="alert">{accessError}</p>}
@@ -218,7 +228,7 @@ function AccountPage() {
           <p id="account-delete-description">This permanently deletes your account and its tasks. Enter your password to confirm.</p>
           <PasswordField id="delete-account-password" label="Current password" labelClassName="account-delete-password-label" inputClassName="account-delete-password" wrapperClassName="account-delete-password-wrap" autoComplete="current-password" value={deletePassword} onChange={(event) => setDeletePassword(event.target.value)} />
           {accessError && <p className="form-error" role="alert">{accessError}</p>}
-          <div className="delete-dialog-actions"><button className="secondary-button" type="button" disabled={busy} onClick={() => { setShowDelete(false); setDeletePassword(''); setAccessError('') }}>Cancel</button><button className="delete-confirm-button" type="button" disabled={busy || !deletePassword} onClick={handleDelete}>{busy ? 'Deleting…' : 'Delete account'}</button></div>
+          <div className="delete-dialog-actions"><button className="secondary-button" type="button" disabled={busyActions.delete} onClick={() => { setShowDelete(false); setDeletePassword(''); setAccessError('') }}>Cancel</button><button className="delete-confirm-button" type="button" disabled={busyActions.delete || !deletePassword} onClick={handleDelete}>{busyActions.delete ? 'Deleting…' : 'Delete account'}</button></div>
         </section>
       </div>}
     </main>

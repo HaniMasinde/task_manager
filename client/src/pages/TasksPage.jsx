@@ -318,7 +318,7 @@ function TasksPage() {
             )}
 
             {formSuccess && (
-              <p role="status">
+              <p className="account-message account-success" role="status">
                 {formSuccess}
               </p>
             )}
