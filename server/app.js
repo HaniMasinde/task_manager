@@ -8,6 +8,7 @@ const taskRoutes = require('./src/routes/taskRoutes');
 const authMiddleware = require('./src/middleware/authMiddleware');
 const errorMiddleware = require('./src/middleware/errorMiddleware');
 const authRoutes = require('./src/routes/authRoutes');
+const dashboardRoutes = require('./src/routes/dashboardRoutes');
 
 const app = express();
 
@@ -44,11 +45,8 @@ app.get('/api/health', (req, res) => {
 
 // Authentication routes
 app.use('/api/auth', authRoutes);
-
-// Task routes: authentication required
 app.use('/api/tasks', authMiddleware, taskRoutes);
-
-// Centralized error handling must be registered last
+app.use('/api/dashboard', authMiddleware, dashboardRoutes);
 app.use(errorMiddleware);
 
 module.exports = app;

@@ -118,6 +118,62 @@ async function completeTask(userId, taskId) {
   const { rows } = await pool.query(query, [userId, taskId]);
   return rows[0] || null;
 }
+// Retrieve dashboard statistics and task lists for one user
+async function getDashboardData(userId, today) {
+  const statsQuery = `
+    SELECT
+      COUNT(*)::int AS total_tasks,
+      (COUNT(*) FILTER (
+        WHERE status = 'completed'
+      ))::int AS completed_tasks,
+      (COUNT(*) FILTER (
+        WHERE status = 'pending'
+      ))::int AS pending_tasks,
+      (COUNT(*) FILTER (
+        WHERE status = 'pending'
+          AND due_date IS NOT NULL
+          AND due_date::date < $2::date
+      ))::int AS overdue_tasks,
+      (COUNT(*) FILTER (
+        WHERE status = 'pending'
+          AND due_date::date = $2::date
+      ))::int AS due_today
+    FROM tasks
+    WHERE user_id = $1
+  `;
+
+  const dueTodayQuery = `
+    SELECT id, title, description, TO_CHAR(due_date::date, 'YYYY-MM-DD') AS due_date, priority, status
+    FROM tasks
+    WHERE user_id = $1
+      AND status = 'pending'
+      AND due_date::date = $2::date
+    ORDER BY due_date ASC
+  `;
+
+  const upcomingQuery = `
+    SELECT id, title, description, TO_CHAR(due_date::date, 'YYYY-MM-DD') AS due_date, priority, status
+    FROM tasks
+    WHERE user_id = $1
+      AND status = 'pending'
+      AND due_date::date > $2::date
+    ORDER BY due_date ASC
+    LIMIT 5
+  `;
+
+  const [statsResult, dueTodayResult, upcomingResult] =
+    await Promise.all([
+      pool.query(statsQuery, [userId, today]),
+      pool.query(dueTodayQuery, [userId, today]),
+      pool.query(upcomingQuery, [userId, today]),
+    ]);
+
+  return {
+    stats: statsResult.rows[0],
+    dueToday: dueTodayResult.rows,
+    upcoming: upcomingResult.rows,
+  };
+}
 module.exports = {
   createTask,
   findTaskByUser,
@@ -125,4 +181,5 @@ module.exports = {
   updateTask,
   deleteTask,
   completeTask,
+  getDashboardData
 };
