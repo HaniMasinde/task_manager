@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { FiAlertCircle, FiCalendar, FiCheckCircle, FiClock, FiList, FiTrendingUp } from 'react-icons/fi';
 import { getDashboard } from '../services/dashboardService';
 
 function formatDueDate(value) {
@@ -103,13 +104,19 @@ function DashboardPage({ theme, onToggleTheme }) {
   const stats = dashboard.stats;
 
   const statisticCards = [
-    { label: 'Total tasks', value: stats.total_tasks },
-    { label: 'Completed', value: stats.completed_tasks },
-    { label: 'Pending', value: stats.pending_tasks },
-    { label: 'Overdue', value: stats.overdue_tasks },
-    { label: 'Due today', value: stats.due_today },
-    { label: 'Completion rate', value: `${stats.completion_rate}%` },
+    { label: 'Total tasks', value: stats.total_tasks, icon: <FiList aria-hidden="true" /> },
+    { label: 'Completed', value: stats.completed_tasks, icon: <FiCheckCircle aria-hidden="true" /> },
+    { label: 'Pending', value: stats.pending_tasks, icon: <FiClock aria-hidden="true" /> },
+    { label: 'Overdue', value: stats.overdue_tasks, icon: <FiAlertCircle aria-hidden="true" /> },
+    { label: 'Due today', value: stats.due_today, icon: <FiCalendar aria-hidden="true" /> },
+    { label: 'Completion rate', value: `${stats.completion_rate}%`, icon: <FiTrendingUp aria-hidden="true" />, progress: stats.completion_rate },
   ];
+  const todayLabel = new Date().toLocaleDateString('en-KE', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'Africa/Nairobi',
+  });
 
   return (
     <main className="dashboard-page">
@@ -117,7 +124,8 @@ function DashboardPage({ theme, onToggleTheme }) {
         <div>
           <p className="dashboard-eyebrow">DAILY TASK MANAGER</p>
           <h1>Your Dashboard</h1>
-          <p>Review your progress and focus on what needs attention.</p>
+          <p className="dashboard-description">Review your progress and focus on what needs attention.</p>
+          <span className="dashboard-date"><FiCalendar aria-hidden="true" /> {todayLabel}</span>
         </div>
 
         <button
@@ -133,8 +141,9 @@ function DashboardPage({ theme, onToggleTheme }) {
       <section className="dashboard-stat-grid" aria-label="Task statistics">
         {statisticCards.map((stat) => (
           <article className="dashboard-stat-card" key={stat.label}>
-            <p>{stat.label}</p>
+            <div className="dashboard-stat-label"><p>{stat.label}</p><span className="dashboard-stat-icon">{stat.icon}</span></div>
             <strong>{stat.value}</strong>
+            {stat.progress !== undefined && <div className="dashboard-progress" role="progressbar" aria-label="Task completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow={stat.progress}><span style={{ width: `${stat.progress}%` }} /></div>}
           </article>
         ))}
       </section>
