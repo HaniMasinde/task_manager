@@ -1,8 +1,14 @@
 
 const taskRepository = require('../repositories/taskRepository');
 
-function validateDueDate(dueDate) {
-  if (dueDate === undefined || dueDate === null || dueDate === '') return;
+function validateDueDate(dueDate, required = false) {
+  if (dueDate === undefined || dueDate === null || dueDate === '') {
+    if (!required) return;
+
+    const error = new Error('A due date is required to create a task.');
+    error.statusCode = 400;
+    throw error;
+  }
 
   if (typeof dueDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
     const error = new Error('Due date must be a valid date.');
@@ -47,7 +53,7 @@ async function createTask(userId, taskData) {
     priority,
   } = taskData;
 
-  validateDueDate(dueDate);
+  validateDueDate(dueDate, true);
 
   if (!title || !title.trim()) {
     const error = new Error('Task title is required.');

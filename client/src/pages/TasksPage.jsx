@@ -19,6 +19,13 @@ function getLocalDateString() {
   return `${year}-${month}-${day}`
 }
 
+function isValidDateString(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
+  const [year, month, day] = value.split('-').map(Number)
+  const parsed = new Date(Date.UTC(year, month - 1, day))
+  return parsed.toISOString().slice(0, 10) === value
+}
+
 function TasksPage() {
   const { user, loading } = useAuth()
   const firstName = user?.name?.trim().split(/\s+/)[0] || user?.username || ''
@@ -95,7 +102,17 @@ function TasksPage() {
       return
     }
 
-    if (dueDate && dueDate < getLocalDateString()) {
+    if (!dueDate) {
+      setFormError('Please select a due date.')
+      return
+    }
+
+    if (!isValidDateString(dueDate)) {
+      setFormError('Enter a valid due date.')
+      return
+    }
+
+    if (dueDate < getLocalDateString()) {
       setFormError('Due date cannot be earlier than today.')
       return
     }
@@ -106,7 +123,7 @@ function TasksPage() {
       const taskData = {
         title: title.trim(),
         description: description.trim(),
-        dueDate: dueDate || null,
+        dueDate,
         priority,
       }
 
@@ -171,9 +188,7 @@ function TasksPage() {
     setEditForm({
       title: task.title || '',
       description: task.description || '',
-      dueDate: task.due_date
-        ? task.due_date.slice(0, 10)
-        : '',
+      dueDate: task.due_date ? task.due_date.slice(0, 10) : '',
       priority: task.priority || 'medium',
     })
 
@@ -205,9 +220,15 @@ function TasksPage() {
       return
     }
 
-    if (editForm.dueDate && editForm.dueDate < getLocalDateString()) {
-      setError('Due date cannot be earlier than today.')
-      return
+    if (editForm.dueDate) {
+      if (!isValidDateString(editForm.dueDate)) {
+        setError('Enter a valid due date.')
+        return
+      }
+      if (editForm.dueDate < getLocalDateString()) {
+        setError('Due date cannot be earlier than today.')
+        return
+      }
     }
 
     setUpdating(true)
