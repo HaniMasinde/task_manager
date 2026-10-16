@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { FiArrowLeft, FiCamera, FiEye, FiEyeOff, FiLogOut, FiTrash2, FiUser } from 'react-icons/fi'
+import { useNavigate } from 'react-router-dom'
+import { FiCamera, FiEye, FiEyeOff, FiLogOut, FiTrash2, FiUser } from 'react-icons/fi'
 import { useAuth } from '../context/useAuth.js'
 import { deleteAccount, updatePassword, updateProfile } from '../services/accountService.js'
 
@@ -163,13 +163,14 @@ function AccountPage() {
   return (
     <main className="account-page">
       <div className="account-shell">
-        <Link className="account-back-link" to="/tasks"><FiArrowLeft aria-hidden="true" /> Back to tasks</Link>
         <header className="account-header">
-          <div className="account-avatar" aria-hidden="true"><FiUser /></div>
+          <div className="account-avatar" aria-hidden="true">
+            {picture ? <img src={picture} alt="" /> : <FiUser />}
+          </div>
           <div>
-            <p className="account-eyebrow">ACCOUNT SETTINGS</p>
-            <h1>Manage your account</h1>
-            <p>Update your profile and manage account access.</p>
+            <p className="account-eyebrow">YOUR ACCOUNT</p>
+            <h1>Account settings</h1>
+            <p>Welcome, {user?.name || user?.username || 'there'}. Manage your profile, security, and account access.</p>
           </div>
         </header>
 
@@ -187,6 +188,7 @@ function AccountPage() {
               <div className="profile-picture-actions">
                 <input className="visually-hidden-input" id="profile-picture" type="file" accept="image/png,image/jpeg,image/webp" onChange={handlePictureChange} />
                 <label className="secondary-button profile-picture-button" htmlFor="profile-picture"><FiCamera aria-hidden="true" /> Upload picture</label>
+                {picture && <button className="profile-picture-remove" type="button" onClick={() => { setPicture(''); setPictureError('') }}>Remove picture</button>}
               </div>
               {pictureError && <p className="profile-picture-error" role="alert">{pictureError}</p>}
             </div>
@@ -213,7 +215,7 @@ function AccountPage() {
         </section>
 
         <section className="account-card account-actions-card" aria-labelledby="security-heading">
-          <div className="account-card-heading"><div><h2 id="security-heading">Account access</h2><p>Sign out on this device or permanently delete your account and tasks.</p></div></div>
+          <div className="account-card-heading"><div><p className="account-eyebrow">SECURITY</p><h2 id="security-heading">Account access</h2><p>Sign out on this device or permanently delete your account and tasks.</p></div></div>
           <div className="account-access-actions">
             <button className="secondary-button" type="button" onClick={handleLogout} disabled={busyActions.logout}><FiLogOut aria-hidden="true" /> {busyActions.logout ? 'Signing out…' : 'Log out'}</button>
             <button className="danger-button" type="button" onClick={() => { setAccessError(''); setShowDelete(true) }}><FiTrash2 aria-hidden="true" /> Delete account</button>

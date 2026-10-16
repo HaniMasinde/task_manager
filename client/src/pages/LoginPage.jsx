@@ -31,7 +31,7 @@ function LoginPage() {
       })
 
       setUser(response.data.user)
-      navigate('/tasks', { replace: true })
+      navigate('/', { replace: true })
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.')
     } finally {
@@ -41,9 +41,12 @@ function LoginPage() {
 
   return (
     <main className="auth-page">
+      <div className="auth-shell">
+      <Link className="auth-brand" to="/" aria-label="Wuod Atieno home"><span className="brand-mark" aria-hidden="true">W</span><span>Wuod Atieno</span></Link>
       <section className="auth-card">
+        <p className="auth-card-kicker">YOUR WORKSPACE AWAITS</p>
         <h1 className="login-heading">Welcome back</h1>
-        <p>Sign in to manage your tasks.</p>
+        <p className="auth-card-intro">Sign in to see your tasks and continue making progress.</p>
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email address</label>
@@ -98,6 +101,7 @@ function LoginPage() {
           Need an account? <Link to="/register">Register</Link>
         </p>
       </section>
+      </div>
     </main>
   )
 }

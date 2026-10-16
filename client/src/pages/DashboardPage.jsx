@@ -1,8 +1,9 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiAlertCircle, FiCalendar, FiCheckCircle, FiClock, FiList, FiTrendingUp } from 'react-icons/fi';
+import { FiAlertCircle, FiArrowUpRight, FiBarChart2, FiCalendar, FiCheckCircle, FiClock, FiUser } from 'react-icons/fi';
 import { getDashboard } from '../services/dashboardService';
+import { useAuth } from '../context/useAuth.js';
 
 function formatDueDate(value) {
   const dateOnly = value instanceof Date
@@ -31,15 +32,14 @@ function TaskList({ tasks, emptyMessage }) {
     <ul className="dashboard-task-list">
       {tasks.map((task) => (
         <li key={task.id} className="dashboard-task-item">
-          <div>
+          <span className="dashboard-task-marker" aria-hidden="true"><FiCheckCircle /></span>
+          <div className="dashboard-task-copy">
             <strong>{task.title}</strong>
             {task.description && <p>{task.description}</p>}
           </div>
           <div className="dashboard-task-meta">
-            <span>{task.priority}</span>
-            <time dateTime={String(task.due_date || '').slice(0, 10)}>
-              Due {formatDueDate(task.due_date)}
-            </time>
+            <span className={`dashboard-priority priority-${String(task.priority || 'medium').toLowerCase()}`}>{task.priority || 'Medium'}</span>
+            <time dateTime={String(task.due_date || '').slice(0, 10)}>{formatDueDate(task.due_date)}</time>
           </div>
         </li>
       ))}
@@ -47,7 +47,8 @@ function TaskList({ tasks, emptyMessage }) {
   );
 }
 
-function DashboardPage({ theme, onToggleTheme }) {
+function DashboardPage({ theme, onToggleTheme, embedded = false }) {
+  const { user } = useAuth();
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -83,20 +84,20 @@ function DashboardPage({ theme, onToggleTheme }) {
 
   if (loading) {
     return (
-      <main className="dashboard-page">
-        <p role="status">Loading your dashboard...</p>
+      <main className={`dashboard-page${embedded ? ' dashboard-page-embedded' : ''}`}>
+        <div className="dashboard-frame"><div className="dashboard-canvas dashboard-state-panel"><p role="status">Loading your dashboard...</p></div></div>
       </main>
     );
   }
 
   if (error) {
     return (
-      <main className="dashboard-page">
-        <h1>Dashboard</h1>
-        <p role="alert">{error}</p>
-        <button type="button" onClick={() => window.location.reload()}>
-          Try again
-        </button>
+      <main className={`dashboard-page${embedded ? ' dashboard-page-embedded' : ''}`}>
+        <div className="dashboard-frame"><div className="dashboard-canvas dashboard-state-panel">
+          <h1>Dashboard</h1>
+          <p role="alert">{error}</p>
+          <button type="button" onClick={() => window.location.reload()}>Try again</button>
+        </div></div>
       </main>
     );
   }
@@ -104,12 +105,10 @@ function DashboardPage({ theme, onToggleTheme }) {
   const stats = dashboard.stats;
 
   const statisticCards = [
-    { label: 'Total tasks', value: stats.total_tasks, icon: <FiList aria-hidden="true" /> },
-    { label: 'Completed', value: stats.completed_tasks, icon: <FiCheckCircle aria-hidden="true" /> },
-    { label: 'Pending', value: stats.pending_tasks, icon: <FiClock aria-hidden="true" /> },
-    { label: 'Overdue', value: stats.overdue_tasks, icon: <FiAlertCircle aria-hidden="true" /> },
-    { label: 'Due today', value: stats.due_today, icon: <FiCalendar aria-hidden="true" /> },
-    { label: 'Completion rate', value: `${stats.completion_rate}%`, icon: <FiTrendingUp aria-hidden="true" />, progress: stats.completion_rate },
+    { label: 'Total tasks', value: stats.total_tasks, detail: 'All your tasks', icon: <FiBarChart2 aria-hidden="true" />, tone: 'blue' },
+    { label: 'Completed', value: stats.completed_tasks, detail: 'Finished tasks', icon: <FiCheckCircle aria-hidden="true" />, tone: 'coral' },
+    { label: 'Pending', value: stats.pending_tasks, detail: 'Still in progress', icon: <FiClock aria-hidden="true" />, tone: 'lavender' },
+    { label: 'Overdue', value: stats.overdue_tasks, detail: 'Need your attention', icon: <FiAlertCircle aria-hidden="true" />, tone: 'rose' },
   ];
   const todayLabel = new Date().toLocaleDateString('en-KE', {
     weekday: 'long',
@@ -117,79 +116,113 @@ function DashboardPage({ theme, onToggleTheme }) {
     month: 'long',
     timeZone: 'Africa/Nairobi',
   });
+  const firstName = user?.name?.trim().split(/\s+/)[0] || user?.username || 'there';
+  const currentHour = Number(new Intl.DateTimeFormat('en-KE', {
+    hour: '2-digit',
+    hourCycle: 'h23',
+    timeZone: 'Africa/Nairobi',
+  }).format(new Date()));
+  const greeting = currentHour < 12 ? 'Good morning' : currentHour < 17 ? 'Good afternoon' : 'Good evening';
 
   return (
-    <main className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <p className="dashboard-eyebrow">DAILY TASK MANAGER</p>
-          <h1>Your Dashboard</h1>
-          <p className="dashboard-description">Review your progress and focus on what needs attention.</p>
-          <span className="dashboard-date"><FiCalendar aria-hidden="true" /> {todayLabel}</span>
-        </div>
+    <main className={`dashboard-page${embedded ? ' dashboard-page-embedded' : ''}`}>
+      <div className="dashboard-frame">
+        <div className="dashboard-canvas">
+          <header className="dashboard-header">
+            <div className="dashboard-welcome">
+              <p className="dashboard-eyebrow"><FiCalendar aria-hidden="true" /> {todayLabel}</p>
+              <h1>{greeting}, {firstName}!</h1>
+              <p className="dashboard-description">Here’s your day at a glance. Keep your priorities moving.</p>
+            </div>
+            <div className="dashboard-user-actions">
+              <button
+                type="button"
+                className="theme-toggle"
+                onClick={onToggleTheme}
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+              >
+                {theme === 'dark' ? '☀ Light mode' : '☾ Dark mode'}
+              </button>
+              <div className="dashboard-profile">
+                {user?.profile_picture
+                  ? <img src={user.profile_picture} alt="" />
+                  : <FiUser aria-hidden="true" />}
+                <span>{user?.name || user?.username || 'My account'}</span>
+              </div>
+            </div>
+          </header>
 
-        <button
-          type="button"
-          className="theme-toggle"
-          onClick={onToggleTheme}
-          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-        >
-          {theme === 'dark' ? '☀ Light mode' : '☾ Dark mode'}
-        </button>
-      </header>
+          <div className="dashboard-main-grid">
+            <div className="dashboard-primary-column">
+              <section className="dashboard-section dashboard-overview" aria-labelledby="dashboard-overview-title">
+                <div className="dashboard-section-header">
+                  <div>
+                    <h2 id="dashboard-overview-title">My Tasks</h2>
+                    <p>Your workload, organized at a glance.</p>
+                  </div>
+                  <Link className="dashboard-view-all" to="/tasks">View all <FiArrowUpRight aria-hidden="true" /></Link>
+                </div>
+                <div className="dashboard-stat-grid" aria-label="Task statistics">
+                  {statisticCards.map((stat) => (
+                    <article className={`dashboard-stat-card tone-${stat.tone}`} key={stat.label}>
+                      <span className="dashboard-stat-icon">{stat.icon}</span>
+                      <h3>{stat.label}</h3>
+                      <strong>{stat.value}</strong>
+                      <p>{stat.detail}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
 
-      <section className="dashboard-stat-grid" aria-label="Task statistics">
-        {statisticCards.map((stat) => (
-          <article className="dashboard-stat-card" key={stat.label}>
-            <div className="dashboard-stat-label"><p>{stat.label}</p><span className="dashboard-stat-icon">{stat.icon}</span></div>
-            <strong>{stat.value}</strong>
-            {stat.progress !== undefined && <div className="dashboard-progress" role="progressbar" aria-label="Task completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow={stat.progress}><span style={{ width: `${stat.progress}%` }} /></div>}
-          </article>
-        ))}
-      </section>
+              <section className="dashboard-section dashboard-progress-section" aria-labelledby="dashboard-progress-title">
+                <div className="dashboard-section-header">
+                  <div>
+                    <h2 id="dashboard-progress-title">Task Progress</h2>
+                    <p>Every completed task moves you forward.</p>
+                  </div>
+                  <span className="dashboard-progress-rate">{stats.completion_rate}%</span>
+                </div>
+                <div className="dashboard-progress-track" role="progressbar" aria-label="Overall task completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow={stats.completion_rate}>
+                  <span style={{ width: `${stats.completion_rate}%` }} />
+                </div>
+                <div className="dashboard-progress-caption">
+                  <span>{stats.completed_tasks} of {stats.total_tasks} tasks completed</span>
+                  <span>{stats.pending_tasks} remaining</span>
+                </div>
+                <Link to="/tasks" className="dashboard-progress-link">Continue working <FiArrowUpRight aria-hidden="true" /></Link>
+              </section>
+            </div>
 
-      <section className="dashboard-section">
-        <div className="dashboard-section-header">
-          <div>
-            <h2>Due today</h2>
-            <p>Tasks that need your attention today.</p>
+            <aside className="dashboard-task-column" aria-label="Tasks that need attention">
+              <section className="dashboard-section dashboard-task-panel">
+                <div className="dashboard-section-header">
+                  <div>
+                    <h2>Due today</h2>
+                    <p>Make time for these today.</p>
+                  </div>
+                  <span className="dashboard-count">{dashboard.dueToday.length}</span>
+                </div>
+                <TaskList tasks={dashboard.dueToday} emptyMessage="You have no pending tasks due today." />
+              </section>
+
+              <section className="dashboard-section dashboard-task-panel">
+                <div className="dashboard-section-header">
+                  <div>
+                    <h2>Upcoming tasks</h2>
+                    <p>Your next five pending tasks.</p>
+                  </div>
+                  <span className="dashboard-count">{dashboard.upcoming.length}</span>
+                </div>
+                <TaskList tasks={dashboard.upcoming} emptyMessage="No upcoming tasks. You're all caught up." />
+              </section>
+            </aside>
           </div>
-          <span className="dashboard-count">
-            {dashboard.dueToday.length}
-          </span>
+
+          <footer className="dashboard-actions">
+            <Link to="/tasks" className="dashboard-primary-link">Manage all tasks</Link>
+          </footer>
         </div>
-
-        <TaskList
-          tasks={dashboard.dueToday}
-          emptyMessage="You have no pending tasks due today."
-        />
-      </section>
-
-      <section className="dashboard-section">
-        <div className="dashboard-section-header">
-          <div>
-            <h2>Upcoming tasks</h2>
-            <p>Your next five pending tasks.</p>
-          </div>
-          <span className="dashboard-count">
-            {dashboard.upcoming.length}
-          </span>
-        </div>
-
-        <TaskList
-          tasks={dashboard.upcoming}
-          emptyMessage="No upcoming tasks. You're all caught up."
-        />
-      </section>
-
-      <footer className="dashboard-actions">
-        <Link to="/tasks" className="dashboard-primary-link">
-          Manage all tasks
-        </Link>
-        <Link to="/account" className="dashboard-secondary-link">
-          Account settings
-        </Link>
-      </footer>
+      </div>
     </main>
   );
 }

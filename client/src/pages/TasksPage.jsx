@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FiBarChart2, FiSettings, FiUser } from 'react-icons/fi'
+import { FiArrowLeft, FiUser } from 'react-icons/fi'
 import { useAuth } from '../context/useAuth.js'
 import {
   getTasks,
@@ -142,7 +142,6 @@ function TasksPage() {
     }
   }
 
-
   async function handleCompleteTask(taskId) {
     setError('')
 
@@ -269,7 +268,7 @@ function TasksPage() {
 
   return (
     <main className="auth-page task-page">
-      <div className="task-dashboard">
+      <div className="task-workspace">
         <header className="task-heading">
             <p className="task-heading-welcome">
               {user.profile_picture
@@ -278,13 +277,14 @@ function TasksPage() {
               <span>Welcome, <span className="task-user-name">{firstName}</span>.</span>
             </p>
           <h1>My Tasks</h1>
-          <nav className="task-header-actions" aria-label="Account navigation">
-            <Link className="task-dashboard-link" to="/dashboard"><FiBarChart2 aria-hidden="true" /> Dashboard</Link>
-            <Link className="account-settings-link" to="/account" aria-label="Account settings" title="Account settings"><FiSettings aria-hidden="true" /></Link>
-          </nav>
+          <Link className="task-back-home" to="/" aria-label="Back to home">
+            <FiArrowLeft aria-hidden="true" />
+            <span>Home</span>
+          </Link>
         </header>
 
         <section
+          id="create-task-section"
           className="task-panel task-create-panel"
           aria-labelledby="create-task-heading"
         >
@@ -358,6 +358,7 @@ function TasksPage() {
         </section>
 
         <section
+          id="task-filters-section"
           className="task-panel task-filters"
           aria-labelledby="task-filters-heading"
         >
@@ -407,14 +408,8 @@ function TasksPage() {
           </button>
         </section>
 
-        <section className="task-panel task-results" aria-label="Task results">
+        <section id="task-results" className="task-panel task-results" aria-label="Task results">
             {tasksLoading && <p>Loading your tasks...</p>}
-
-          {error && (
-            <p className="form-error" role="alert">
-              {error}
-            </p>
-          )}
 
           {error && (
             <p className="form-error" role="alert">
@@ -572,6 +567,7 @@ function TasksPage() {
             </ul>
           )}
         </section>
+        </div>
 
         {deleteTarget && (
           <div className="delete-dialog-overlay">
@@ -613,7 +609,6 @@ function TasksPage() {
           </div>
         )}
 
-      </div>
     </main>
   )
 }

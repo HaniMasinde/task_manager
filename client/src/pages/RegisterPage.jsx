@@ -47,7 +47,7 @@ function RegisterPage() {
       setUser(response.data.user)
       setSuccess(response.message || 'Registration successful.')
 
-      navigate('/tasks', { replace: true })
+      navigate('/', { replace: true })
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.')
     } finally {
@@ -57,9 +57,12 @@ function RegisterPage() {
 
   return (
     <main className="auth-page">
+      <div className="auth-shell">
+      <Link className="auth-brand" to="/" aria-label="Wuod Atieno home"><span className="brand-mark" aria-hidden="true">W</span><span>Wuod Atieno</span></Link>
       <section className="auth-card">
+        <p className="auth-card-kicker">A FRESH START</p>
         <h1>Create an account</h1>
-        <p>Start organizing your daily tasks.</p>
+        <p className="auth-card-intro">Create your account to bring your plans and priorities together.</p>
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="name">Full name</label>
@@ -163,6 +166,7 @@ function RegisterPage() {
           Already registered? <Link to="/login">Sign in</Link>
         </p>
       </section>
+      </div>
     </main>
   )
 }
