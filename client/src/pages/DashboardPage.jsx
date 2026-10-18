@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiAlertCircle, FiArrowUpRight, FiBarChart2, FiCalendar, FiCheckCircle, FiClock, FiUser } from 'react-icons/fi';
+import { FiAlertCircle, FiArrowUpRight, FiBarChart2, FiCalendar, FiCheckCircle, FiClock, FiMoon, FiSun, FiUser } from 'react-icons/fi';
 import { getDashboard } from '../services/dashboardService';
 import { useAuth } from '../context/useAuth.js';
 
@@ -128,26 +128,48 @@ function DashboardPage({ theme, onToggleTheme, embedded = false }) {
     <main className={`dashboard-page${embedded ? ' dashboard-page-embedded' : ''}`}>
       <div className="dashboard-frame">
         <div className="dashboard-canvas">
-          <header className="dashboard-header">
+          <header className="dashboard-header dashboard-header-hero">
             <div className="dashboard-welcome">
-              <p className="dashboard-eyebrow"><FiCalendar aria-hidden="true" /> {todayLabel}</p>
+              <p className="dashboard-eyebrow"><FiCalendar aria-hidden="true" /> <span>{todayLabel}</span></p>
               <h1>{greeting}, {firstName}!</h1>
               <p className="dashboard-description">Here’s your day at a glance. Keep your priorities moving.</p>
             </div>
-            <div className="dashboard-user-actions">
-              <button
-                type="button"
-                className="theme-toggle"
-                onClick={onToggleTheme}
-                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-              >
-                {theme === 'dark' ? '☀ Light mode' : '☾ Dark mode'}
-              </button>
-              <div className="dashboard-profile">
-                {user?.profile_picture
-                  ? <img src={user.profile_picture} alt="" />
-                  : <FiUser aria-hidden="true" />}
-                <span>{user?.name || user?.username || 'My account'}</span>
+            <div className="dashboard-header-side">
+              <div className="dashboard-user-actions">
+                <button
+                  type="button"
+                  className="theme-toggle"
+                  onClick={onToggleTheme}
+                  aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+                  title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+                >
+                  {theme === 'dark'
+                    ? <><FiSun aria-hidden="true" /><span>Light</span></>
+                    : <><FiMoon aria-hidden="true" /><span>Dark</span></>}
+                </button>
+                <div className="dashboard-profile">
+                  {user?.profile_picture
+                    ? <img src={user.profile_picture} alt="" />
+                    : <FiUser aria-hidden="true" />}
+                  <span>{user?.name || user?.username || 'My account'}</span>
+                </div>
+              </div>
+              <div className="dashboard-header-progress">
+                <div
+                  className="dashboard-header-progress-ring"
+                  role="img"
+                  aria-label={`${stats.completion_rate}% of tasks completed`}
+                  style={{ '--completion-rate': `${stats.completion_rate}%` }}
+                >
+                  <span>{stats.completion_rate}%</span>
+                </div>
+                <div className="dashboard-header-progress-copy">
+                  <strong>Your progress</strong>
+                  <span>{stats.completed_tasks} of {stats.total_tasks} tasks complete</span>
+                </div>
+                <Link className="dashboard-header-link" to="/tasks" aria-label="Go to all tasks">
+                  <FiArrowUpRight aria-hidden="true" />
+                </Link>
               </div>
             </div>
           </header>
