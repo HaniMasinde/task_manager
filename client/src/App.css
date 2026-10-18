@@ -3407,9 +3407,9 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 @media (max-width: 560px) {
   .home-workspace { gap: 10px; padding: 11px; }
   .home-sidebar { flex-wrap: wrap; justify-content: space-between; gap: 7px; border-radius: 14px; }
-  .home-sidebar-nav { order: 3; flex: 1 0 100%; justify-content: stretch; }
-  .home-sidebar-nav a { min-width: 0; flex: 1; justify-content: center; gap: 5px; padding: 0 5px; font-size: 0.66rem; }
-  .home-sidebar-nav a svg { width: 15px; font-size: 0.9rem; }
+  .home-sidebar-nav { order: 3; display: grid; flex: 1 0 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .home-sidebar-nav a { min-width: 0; min-height: 42px; justify-content: flex-start; gap: 8px; padding: 0 10px; font-size: 0.72rem; }
+  .home-sidebar-nav a svg { width: 17px; font-size: 0.98rem; }
   .home-sidebar-bottom { margin-left: auto; }
   .home-sidebar-logout { min-height: 32px; }
   .dashboard-page-embedded .dashboard-frame { padding: 6px; border-radius: 16px; }
