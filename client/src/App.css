@@ -3578,8 +3578,8 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
     z-index: 1001;
     inset: 0 auto 0 0;
     display: flex;
-    width: min(270px, 78vw);
-    max-width: 270px;
+    width: min(320px, calc(100vw - 24px));
+    max-width: none;
     height: 100vh;
     height: 100dvh;
     min-height: 0;
@@ -3609,7 +3609,7 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
     gap: 5px;
     width: 100%;
   }
-  .home-sidebar-nav a { min-height: 45px; justify-content: flex-start; gap: 11px; padding: 0 11px; font-size: .81rem; }
+  .home-sidebar-nav a { width: 100%; min-height: 45px; justify-content: flex-start; gap: 11px; padding: 0 11px; font-size: .81rem; }
   .home-sidebar-nav a svg { width: 18px; font-size: 1.05rem; }
   .home-sidebar-profile { display: flex; }
   .home-sidebar-error { display: block; }
