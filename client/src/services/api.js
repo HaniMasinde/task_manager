@@ -1,5 +1,6 @@
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api`;
+
 async function apiRequest(endpoint, options = {}) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -17,7 +18,7 @@ async function apiRequest(endpoint, options = {}) {
     try {
       data = JSON.parse(responseText);
     } catch {
-      data = {};
+      // Ignore non-JSON responses and fall back to the default empty object.
     }
   }
 

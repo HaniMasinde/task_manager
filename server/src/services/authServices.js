@@ -70,12 +70,17 @@ async function registerUser(userData = {}) {
 }
 
 async function loginUser({email, password}){
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    const error = new Error('Email and password are required.');
+    error.statusCode = 400;
+    throw error;
+  }
 
-  const normalEmail = email.toLowerCase().trim();
+  const normalEmail = email.trim().toLowerCase();
 
   const user = await userRepository.findUserByEmail(normalEmail);
 
-  if(!user){
+  if (!user) {
     const error = new Error('Invalid email or password');
     error.statusCode = 401;
     throw error;
@@ -83,13 +88,13 @@ async function loginUser({email, password}){
 
   const isPasswordValid = await bycript.compare(password, user.password_hash);
 
-  if(!isPasswordValid){
+  if (!isPasswordValid) {
     const error = new Error('Invalid email or password');
     error.statusCode = 401;
     throw error;
   }
 
-  const {password_hash, ...safeUser} = user;
+  const { password_hash, ...safeUser } = user;
 
   return safeUser;
 }
@@ -104,7 +109,7 @@ function accountError(message, statusCode) {
 }
 
 function validateProfilePicture(value) {
-  if (value === null || value === '') return null;
+  if (value === undefined || value === null || value === '') return null;
   if (typeof value !== 'string') throw accountError('Invalid profile picture.', 400);
   const match = value.match(/^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/]+={0,2})$/);
   if (!match) throw accountError('Use a PNG, JPEG, or WebP profile picture.', 400);
@@ -143,7 +148,9 @@ async function updateProfile(userId, { name, email, profilePicture, currentPassw
   if (await userRepository.findUserByEmailForOtherId(normalEmail, userId)) {
     throw accountError('An account with this email already exists.', 409);
   }
-  const safePicture = validateProfilePicture(profilePicture);
+  const safePicture = profilePicture === undefined
+    ? existingUser.profile_picture
+    : validateProfilePicture(profilePicture);
   try {
     return await userRepository.updateUserProfile(userId, {
       name: normalName,

@@ -40,7 +40,7 @@ async function findUserById(id) {
 
 async function findUserCredentialsById(id) {
   const { rows } = await pool.query(
-    'SELECT id, email, password_hash FROM users WHERE id = $1',
+    'SELECT id, email, password_hash, profile_picture FROM users WHERE id = $1',
     [id]
   );
   return rows[0] || null;
