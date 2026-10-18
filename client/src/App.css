@@ -3810,10 +3810,19 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 .dashboard-header-hero .dashboard-profile img,
 .dashboard-header-hero .dashboard-profile > svg {
   flex: 0 0 34px;
+  display: block;
   width: 34px;
   height: 34px;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 50%;
   background: #e5d7e8;
   color: #715b81;
+}
+
+.dashboard-header-hero .dashboard-profile img {
+  object-fit: cover;
+  object-position: center;
 }
 
 .dashboard-header-progress {
