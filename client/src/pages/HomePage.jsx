@@ -26,6 +26,8 @@ import {
   FiPlay,
   FiRotateCcw,
   FiCoffee,
+  FiMenu,
+  FiX,
 } from 'react-icons/fi'
 
 function formatTimer(seconds) {
@@ -39,6 +41,7 @@ function HomePage({ theme, onToggleTheme }) {
   const navigate = useNavigate()
   const [loggingOut, setLoggingOut] = useState(false)
   const [logoutError, setLogoutError] = useState('')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [timerMode, setTimerMode] = useState('focus')
   const [secondsLeft, setSecondsLeft] = useState(25 * 60)
   const [timerRunning, setTimerRunning] = useState(false)
@@ -92,20 +95,38 @@ function HomePage({ theme, onToggleTheme }) {
   if (user) {
     return (
       <div className="home-workspace">
-        <aside className="home-sidebar" aria-label="Main navigation">
+        {sidebarOpen && (
+          <button
+            className="home-sidebar-backdrop"
+            type="button"
+            aria-label="Close navigation menu"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        <aside className={`home-sidebar${sidebarOpen ? ' is-mobile-open' : ''}`} aria-label="Main navigation">
+          <button
+            className="home-sidebar-toggle"
+            type="button"
+            aria-label={sidebarOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={sidebarOpen}
+            aria-controls="home-sidebar-navigation"
+            onClick={() => setSidebarOpen((open) => !open)}
+          >
+            {sidebarOpen ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}
+          </button>
           <Link className="home-sidebar-brand" to="/" aria-label="Wuod Atieno home">
             <span className="home-sidebar-brand-mark" aria-hidden="true">W</span>
             <span>Wuod Atieno</span>
           </Link>
           <div className="home-sidebar-section-label">Workspace</div>
-          <nav className="home-sidebar-nav" aria-label="Workspace navigation">
-            <Link className="is-active" to="/" aria-current="page" title="Home"><FiHome aria-hidden="true" /><span>Home</span></Link>
-            <Link to="/dashboard" title="Dashboard"><FiBarChart2 aria-hidden="true" /><span>Dashboard</span></Link>
-            <Link to="/tasks" title="My Tasks"><FiCheckSquare aria-hidden="true" /><span>My Tasks</span></Link>
-            <Link to="/account" title="Account settings"><FiSettings aria-hidden="true" /><span>Account settings</span></Link>
+          <nav id="home-sidebar-navigation" className="home-sidebar-nav" aria-label="Workspace navigation">
+            <Link className="is-active" to="/" aria-current="page" title="Home" onClick={() => setSidebarOpen(false)}><FiHome aria-hidden="true" /><span>Home</span></Link>
+            <Link to="/dashboard" title="Dashboard" onClick={() => setSidebarOpen(false)}><FiBarChart2 aria-hidden="true" /><span>Dashboard</span></Link>
+            <Link to="/tasks" title="My Tasks" onClick={() => setSidebarOpen(false)}><FiCheckSquare aria-hidden="true" /><span>My Tasks</span></Link>
+            <Link to="/account" title="Account settings" onClick={() => setSidebarOpen(false)}><FiSettings aria-hidden="true" /><span>Account settings</span></Link>
           </nav>
           <div className="home-sidebar-bottom">
-            <Link className="home-sidebar-profile" to="/account">
+            <Link className="home-sidebar-profile" to="/account" onClick={() => setSidebarOpen(false)}>
               {user.profile_picture
                 ? <img src={user.profile_picture} alt="" />
                 : <span className="home-sidebar-avatar-fallback"><FiUser aria-hidden="true" /></span>}
