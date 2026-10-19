@@ -5085,6 +5085,93 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
   .dashboard-account-footer strong { max-width: min(190px, calc(100vw - 130px)); }
 }
 
+/* About and workspace guide */
+.about-page { flex: 1; min-height: calc(100vh - 90px); padding: clamp(22px, 4vw, 48px) 20px 56px; background: var(--brand-canvas); color: #403646; }
+.about-shell { width: min(1040px, 100%); margin: 0 auto; }
+.about-back-link { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 16px; color: #786a80; font-size: .77rem; font-weight: 700; text-decoration: none; }
+.about-back-link:hover { color: #5e496c; }
+.about-back-link:focus-visible,
+.about-feature-card a:focus-visible,
+.about-hero-cta:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.about-hero { position: relative; display: flex; min-height: 258px; align-items: center; justify-content: space-between; gap: 30px; overflow: hidden; padding: clamp(25px, 5vw, 48px); border: 1px solid #e8dce8; border-radius: 23px; background: linear-gradient(112deg, #fff 0%, #f8f2f8 67%, #eee4f0 100%); box-shadow: 0 12px 34px rgb(61 48 68 / 6%); }
+.about-hero-copy { position: relative; z-index: 1; width: min(620px, 72%); }
+.about-kicker { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 13px; color: #806b91; font-size: .64rem; font-weight: 800; letter-spacing: .13em; }
+.about-hero h1 { max-width: 590px; margin: 0; color: #332c38; font-size: clamp(2rem, 4.6vw, 3.15rem); line-height: 1.04; letter-spacing: -.055em; }
+.about-hero-copy > p { max-width: 510px; margin: 13px 0 20px; color: #756b7b; font-size: .91rem; line-height: 1.65; }
+.about-hero-cta { display: inline-flex; min-height: 42px; align-items: center; gap: 9px; padding: 0 15px; border-radius: 11px; background: #725b82; color: white; font-size: .78rem; font-weight: 750; text-decoration: none; transition: background .15s ease, transform .15s ease; }
+.about-hero-cta:hover { transform: translateY(-1px); background: #60496f; }
+.about-hero-art { position: absolute; top: 50%; right: 8%; width: 180px; height: 180px; transform: translateY(-50%); }
+.about-hero-art::before,.about-hero-art::after { position: absolute; inset: 10px; border: 1px solid rgb(126 98 142 / 14%); border-radius: 50%; content: ''; }
+.about-hero-art::after { inset: 31px; border-color: rgb(126 98 142 / 12%); }
+.about-hero-art > span { position: absolute; z-index: 2; top: 50%; left: 50%; display: grid; width: 70px; height: 70px; place-items: center; border: 7px solid #fff; border-radius: 22px; background: linear-gradient(145deg, #806b91, #62506f); box-shadow: 0 12px 25px rgb(91 72 106 / 22%); color: #fff; font-size: 1.55rem; transform: translate(-50%,-50%) rotate(-8deg); }
+.about-hero-art i,.about-hero-art b,.about-hero-art em { position: absolute; z-index: 1; display: block; width: 13px; height: 13px; border-radius: 50%; background: #d4a5a6; box-shadow: 0 0 0 6px rgb(212 165 166 / 15%); }
+.about-hero-art i { top: 26px; right: 43px; }
+.about-hero-art b { bottom: 35px; left: 19px; width: 9px; height: 9px; background: #9a83a5; }
+.about-hero-art em { right: 15px; bottom: 45px; width: 7px; height: 7px; background: #c4a873; }
+.about-section { margin-top: 32px; }
+.about-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 15px; }
+.about-eyebrow { margin: 0 0 5px; color: #9a8da0; font-size: .59rem; font-weight: 800; letter-spacing: .13em; }
+.about-section-heading h2 { margin: 0; color: #3b3341; font-size: clamp(1.18rem, 2.2vw, 1.45rem); letter-spacing: -.035em; }
+.about-section-heading > p { max-width: 300px; margin: 0 0 2px; color: #817686; font-size: .76rem; line-height: 1.5; text-align: right; }
+.about-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 13px; }
+.about-step-card,.about-feature-card { border: 1px solid #e9e3eb; border-radius: 15px; background: #fff; box-shadow: 0 5px 18px rgb(61 48 68 / 4%); }
+.about-step-card { padding: 17px 18px 19px; }
+.about-step-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.about-step-top span { color: #a99bad; font-size: .65rem; font-weight: 800; letter-spacing: .08em; }
+.about-step-top svg { width: 35px; height: 35px; padding: 9px; border-radius: 11px; background: #f1ebf3; color: #725b82; }
+.about-step-card h3,.about-feature-card h3 { margin: 0; color: #413847; font-size: .87rem; }
+.about-step-card p,.about-feature-card p { margin: 7px 0 0; color: #807684; font-size: .74rem; line-height: 1.55; }
+.about-feature-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 11px; }
+.about-feature-card { display: flex; min-width: 0; gap: 13px; padding: 16px; }
+.about-feature-icon { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border-radius: 12px; background: #f1ebf3; color: #725b82; font-size: 1rem; }
+.about-feature-card > div { min-width: 0; }
+.about-feature-card p { margin-top: 5px; }
+.about-feature-card a { display: inline-flex; align-items: center; gap: 6px; margin-top: 11px; color: #725b82; font-size: .7rem; font-weight: 750; text-decoration: none; }
+.about-feature-card a:hover { color: #493558; text-decoration: underline; }
+.about-tip { display: flex; align-items: flex-start; gap: 12px; margin-top: 16px; padding: 16px 18px; border: 1px solid #e9dfe8; border-radius: 14px; background: linear-gradient(110deg, #f7f1f7, #fbf7fa); }
+.about-tip > span { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border-radius: 10px; background: #fff; color: #806b91; }
+.about-tip strong { color: #4b3d51; font-size: .78rem; }
+.about-tip p { margin: 4px 0 0; color: #7d7182; font-size: .74rem; line-height: 1.5; }
+:root[data-theme='dark'] .about-page { background: #17141a; color: #f3edf5; }
+:root[data-theme='dark'] .about-back-link { color: #c7b7d0; }
+:root[data-theme='dark'] .about-back-link:hover { color: #eadbf0; }
+:root[data-theme='dark'] .about-hero { border-color: #39313e; background: linear-gradient(112deg, #1c1a26, #28212d 67%, #302535); }
+:root[data-theme='dark'] .about-hero h1,:root[data-theme='dark'] .about-section-heading h2,:root[data-theme='dark'] .about-step-card h3,:root[data-theme='dark'] .about-feature-card h3 { color: #f1e9f4; }
+:root[data-theme='dark'] .about-hero-copy > p,:root[data-theme='dark'] .about-section-heading > p,:root[data-theme='dark'] .about-step-card p,:root[data-theme='dark'] .about-feature-card p { color: #b9adbf; }
+:root[data-theme='dark'] .about-step-card,:root[data-theme='dark'] .about-feature-card { border-color: #393341; background: #211e2b; box-shadow: 0 5px 18px rgb(0 0 0 / 12%); }
+:root[data-theme='dark'] .about-step-top svg,:root[data-theme='dark'] .about-feature-icon { background: #393143; color: #d0b8df; }
+:root[data-theme='dark'] .about-feature-card a { color: #d0b8df; }
+:root[data-theme='dark'] .about-tip { border-color: #393341; background: linear-gradient(110deg, #211e2b, #28212d); }
+:root[data-theme='dark'] .about-tip > span { background: #393143; color: #d0b8df; }
+:root[data-theme='dark'] .about-tip strong { color: #eee4f2; }
+:root[data-theme='dark'] .about-tip p,:root[data-theme='dark'] .about-eyebrow { color: #b4a7bc; }
+@media (max-width: 700px) {
+  .about-page { padding: 18px 14px 34px; }
+  .about-hero { min-height: 235px; padding: 26px; }
+  .about-hero-copy { width: min(100%, 520px); }
+  .about-hero-art { right: -54px; opacity: .32; }
+  .about-hero h1 { max-width: 470px; font-size: clamp(1.9rem, 7vw, 2.7rem); }
+  .about-steps { gap: 9px; }
+  .about-step-card { padding: 14px; }
+  .about-section { margin-top: 25px; }
+}
+@media (max-width: 520px) {
+  .about-page { padding: 14px 10px 26px; }
+  .about-back-link { margin-bottom: 11px; }
+  .about-hero { min-height: 0; padding: 23px 19px; border-radius: 17px; }
+  .about-hero-art { top: auto; right: -42px; bottom: -75px; transform: scale(.78); }
+  .about-kicker { margin-bottom: 10px; font-size: .57rem; }
+  .about-hero h1 { font-size: 1.95rem; }
+  .about-hero-copy > p { max-width: 95%; font-size: .82rem; }
+  .about-section-heading { align-items: flex-start; flex-direction: column; gap: 5px; }
+  .about-section-heading > p { text-align: left; }
+  .about-steps,.about-feature-grid { grid-template-columns: minmax(0,1fr); }
+  .about-step-card { padding: 15px 16px; }
+  .about-step-top { margin-bottom: 11px; }
+  .about-feature-card { padding: 14px; }
+  .about-tip { padding: 14px; }
+}
+
 .reminders-page { min-height: calc(100vh - 90px); padding: clamp(22px, 5vw, 54px) 20px; background: #f7f4f8; color: #403646; }
 .reminders-shell { width: min(880px, 100%); margin: 0 auto; }
 .reminders-header { position: relative; padding: 18px 0 25px; }

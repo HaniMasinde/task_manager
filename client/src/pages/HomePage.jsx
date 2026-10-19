@@ -6,6 +6,7 @@ import { useAuth } from '../context/useAuth.js'
 import {
   FiHome,
   FiCalendar,
+  FiBookOpen,
   FiBell,
   FiCheckCircle,
   FiCheckSquare,
@@ -256,21 +257,22 @@ function HomePage({ theme, onToggleTheme }) {
           </Link>
           <div className="home-sidebar-section-label">Workspace</div>
           <nav id="home-sidebar-navigation" className="home-sidebar-nav" aria-label="Workspace navigation">
-            <Link className="is-active" to="/" aria-current="page" title="Home" onClick={() => setSidebarOpen(false)}><FiHome aria-hidden="true" /><span>Home</span></Link>
-            <Link to="/dashboard" title="Dashboard" onClick={() => setSidebarOpen(false)}><FiBarChart2 aria-hidden="true" /><span>Dashboard</span></Link>
-            <Link to="/tasks" title="My Tasks" onClick={() => setSidebarOpen(false)}><FiCheckSquare aria-hidden="true" /><span>My Tasks</span></Link>
-            <Link to="/calendar" title="Calendar" onClick={() => setSidebarOpen(false)}><FiCalendar aria-hidden="true" /><span>Calendar</span></Link>
+            <Link className={location.pathname === '/' ? 'is-active' : undefined} to="/" aria-current={location.pathname === '/' ? 'page' : undefined} title="Home" onClick={() => setSidebarOpen(false)}><FiHome aria-hidden="true" /><span>Home</span></Link>
+            <Link className={location.pathname === '/dashboard' ? 'is-active' : undefined} to="/dashboard" aria-current={location.pathname === '/dashboard' ? 'page' : undefined} title="Dashboard" onClick={() => setSidebarOpen(false)}><FiBarChart2 aria-hidden="true" /><span>Dashboard</span></Link>
+            <Link className={location.pathname === '/tasks' ? 'is-active' : undefined} to="/tasks" aria-current={location.pathname === '/tasks' ? 'page' : undefined} title="My Tasks" onClick={() => setSidebarOpen(false)}><FiCheckSquare aria-hidden="true" /><span>My Tasks</span></Link>
+            <Link className={location.pathname === '/calendar' ? 'is-active' : undefined} to="/calendar" aria-current={location.pathname === '/calendar' ? 'page' : undefined} title="Calendar" onClick={() => setSidebarOpen(false)}><FiCalendar aria-hidden="true" /><span>Calendar</span></Link>
           </nav>
           <div className="home-sidebar-section-label">Daily tools</div>
           <nav className="home-sidebar-nav" aria-label="Daily tools">
             <Link to="/#focus-title" title="Focus session" onClick={() => setSidebarOpen(false)}><FiTarget aria-hidden="true" /><span>Focus session</span></Link>
             <Link to="/#daily-intention" title="Daily intention" onClick={() => setSidebarOpen(false)}><FiEdit3 aria-hidden="true" /><span>Daily intention</span></Link>
             <Link to="/#weekly-focus" title="Weekly focus" onClick={() => setSidebarOpen(false)}><FiTrendingUp aria-hidden="true" /><span>Weekly focus</span></Link>
-            <Link to="/reminders" title="Reminders" onClick={() => setSidebarOpen(false)}><FiBell aria-hidden="true" /><span>Reminders</span></Link>
+            <Link className={location.pathname === '/reminders' ? 'is-active' : undefined} to="/reminders" aria-current={location.pathname === '/reminders' ? 'page' : undefined} title="Reminders" onClick={() => setSidebarOpen(false)}><FiBell aria-hidden="true" /><span>Reminders</span></Link>
           </nav>
           <div className="home-sidebar-section-label">Account</div>
           <nav className="home-sidebar-nav" aria-label="Account navigation">
-            <Link to="/account" title="Account settings" onClick={() => setSidebarOpen(false)}><FiSettings aria-hidden="true" /><span>Account settings</span></Link>
+            <Link className={location.pathname === '/account' ? 'is-active' : undefined} to="/account" aria-current={location.pathname === '/account' ? 'page' : undefined} title="Account settings" onClick={() => setSidebarOpen(false)}><FiSettings aria-hidden="true" /><span>Account settings</span></Link>
+            <Link className={location.pathname === '/about' ? 'is-active' : undefined} to="/about" aria-current={location.pathname === '/about' ? 'page' : undefined} title="About & guide" onClick={() => setSidebarOpen(false)}><FiBookOpen aria-hidden="true" /><span>About &amp; guide</span></Link>
           </nav>
           <div className="home-sidebar-bottom">
             <Link className="home-sidebar-profile" to="/account" onClick={() => setSidebarOpen(false)}>

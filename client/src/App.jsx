@@ -11,6 +11,7 @@ import TasksPage from './pages/TasksPage.jsx'
 import AccountPage from './pages/AccountPage.jsx'
 import CalendarPage from './pages/CalendarPage.jsx'
 import RemindersPage from './pages/RemindersPage.jsx'
+import AboutPage from './pages/AboutPage.jsx'
 import SiteFooter from './components/SiteFooter.jsx'
 import './App.css'
 
@@ -55,6 +56,7 @@ function App() {
               <Route path="/tasks" element={<TasksPage />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/reminders" element={<RemindersPage />} />
+              <Route path="/about" element={<AboutPage />} />
               <Route path="/account" element={<AccountPage />} />
               <Route
   path="/dashboard"
