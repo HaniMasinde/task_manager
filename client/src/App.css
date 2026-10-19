@@ -5172,6 +5172,84 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
   .about-tip { padding: 14px; }
 }
 
+/* Task-linked focus planner */
+.home-focus-layout { display: grid; grid-template-columns: minmax(0,1fr); gap: 15px; }
+.home-focus-planner { display: grid; grid-template-columns: minmax(0,1.04fr) minmax(0,.96fr); align-items: stretch; gap: 14px; }
+.home-plan-card { display: flex; min-width: 0; min-height: 405px; flex-direction: column; padding: 21px; border: 1px solid #e9e1e9; border-radius: 19px; background: #fff; box-shadow: 0 9px 23px rgb(61 48 68 / 5%); }
+.home-plan-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.home-plan-heading .eyebrow { margin: 0 0 4px; color: #9a8ea0; font-size: .61rem; font-weight: 750; letter-spacing: .13em; }
+.home-plan-heading h2 { margin: 0; color: #403646; font-size: 1.04rem; font-weight: 740; }
+.home-plan-count { flex: 0 0 auto; padding: 6px 9px; border-radius: 99px; background: #f1ebf3; color: #725b82; font-size: .64rem; font-weight: 750; }
+.home-plan-intro { margin: 9px 0 14px; color: #817686; font-size: .75rem; line-height: 1.5; }
+.home-plan-add-row { display: flex; gap: 8px; }
+.home-plan-add-row select { width: 100%; min-width: 0; min-height: 40px; padding: 0 10px; border: 1px solid #e8e1e9; border-radius: 10px; background: #fff; color: #514858; font: inherit; font-size: .74rem; }
+.home-plan-add-row button { display: inline-flex; min-width: 76px; min-height: 40px; flex: 0 0 auto; align-items: center; justify-content: center; gap: 6px; padding: 0 11px; border: 0; border-radius: 10px; background: #725b82; color: #fff; font: inherit; font-size: .73rem; font-weight: 700; cursor: pointer; }
+.home-plan-add-row button:disabled { background: #d8d1dc; cursor: not-allowed; }
+.home-plan-add-row select:focus-visible,.home-plan-add-row button:focus-visible,.home-plan-task-select:focus-visible,.home-plan-remove:focus-visible,.home-plan-view-all:focus-visible,.home-focus-duration button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.home-plan-empty { margin: 13px 0 0; padding: 12px; border: 1px dashed #e5dce8; border-radius: 10px; color: #857a89; font-size: .72rem; line-height: 1.5; }
+.home-plan-list { display: grid; gap: 7px; margin: 12px 0 0; padding: 0; list-style: none; }
+.home-plan-list li { display: flex; min-width: 0; align-items: center; gap: 6px; padding: 5px 7px 5px 5px; border: 1px solid #eee9f0; border-radius: 11px; background: #fcfbfc; }
+.home-plan-list li.is-up-next { border-color: #d9cadd; background: #f8f4fa; }
+.home-plan-task-select { display: flex; min-width: 0; flex: 1; align-items: center; gap: 9px; padding: 2px; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+.home-plan-task-number { display: grid; width: 29px; height: 29px; flex: 0 0 29px; place-items: center; border-radius: 9px; background: #f0ebf2; color: #776483; font-size: .68rem; font-weight: 750; }
+.home-plan-list li.is-up-next .home-plan-task-number { background: #725b82; color: #fff; }
+.home-plan-task-copy { display: grid; min-width: 0; gap: 2px; }
+.home-plan-task-copy strong { overflow: hidden; color: #49414d; font-size: .74rem; text-overflow: ellipsis; white-space: nowrap; }
+.home-plan-task-copy small { color: #978d9a; font-size: .61rem; text-transform: capitalize; }
+.home-plan-remove { display: grid; width: 30px; height: 30px; flex: 0 0 30px; place-items: center; border: 0; border-radius: 8px; background: transparent; color: #9a909e; cursor: pointer; }
+.home-plan-remove:hover { background: #f4e8ea; color: #a34f58; }
+.home-plan-view-all { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; margin-top: auto; padding-top: 12px; color: #725b82; font-size: .7rem; font-weight: 750; text-decoration: none; }
+.home-plan-view-all:hover { text-decoration: underline; }
+.home-focus-card { min-width: 0; min-height: 405px; justify-content: flex-start; padding: 20px; }
+.home-focus-up-next { display: grid; justify-items: center; gap: 5px; width: 100%; margin: 17px 0 0; text-align: center; }
+.home-focus-up-next small { color: #9a8ea0; font-size: .56rem; font-weight: 800; letter-spacing: .12em; }
+.home-focus-up-next strong { overflow: hidden; max-width: 100%; color: #514858; font-size: .83rem; text-overflow: ellipsis; white-space: nowrap; }
+.home-focus-up-next .home-next-task-priority { margin: 2px 0 0; }
+.home-focus-card .home-focus-clock { width: 158px; height: 158px; margin: 11px auto 12px; }
+.home-focus-card .home-focus-clock > span { font-size: 2.25rem; }
+.home-focus-duration { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 5px; margin: 0 0 13px; }
+.home-focus-duration button { display: inline-flex; min-height: 31px; align-items: center; justify-content: center; gap: 5px; padding: 0 10px; border: 1px solid #e9e2eb; border-radius: 9px; background: #faf9fb; color: #766d7b; font: inherit; font-size: .65rem; font-weight: 700; cursor: pointer; }
+.home-focus-duration button.is-selected { border-color: #725b82; background: #725b82; color: #fff; }
+.home-focus-duration button.home-focus-break { margin-left: 3px; }
+.home-focus-card .home-focus-controls { width: 100%; margin-top: 0; }
+.home-focus-card .home-focus-start { min-height: 43px; }
+.home-focus-card .home-focus-start:disabled { opacity: .52; cursor: not-allowed; transform: none; }
+.home-focus-side { grid-template-columns: repeat(2,minmax(0,1fr)); grid-template-rows: auto; align-items: stretch; }
+.home-focus-side > .home-focus-tip { grid-column: 1 / -1; }
+:root[data-theme='dark'] .home-plan-card { border-color: #393341; background: #211e2b; box-shadow: 0 9px 23px rgb(0 0 0 / 14%); }
+:root[data-theme='dark'] .home-plan-heading .eyebrow,:root[data-theme='dark'] .home-plan-intro { color: #b5a9bc; }
+:root[data-theme='dark'] .home-plan-heading h2,:root[data-theme='dark'] .home-plan-task-copy strong,:root[data-theme='dark'] .home-focus-up-next strong { color: #eee6f1; }
+:root[data-theme='dark'] .home-plan-count,:root[data-theme='dark'] .home-plan-task-number { background: #393143; color: #d0b8df; }
+:root[data-theme='dark'] .home-plan-add-row select,:root[data-theme='dark'] .home-plan-list li { border-color: #393341; background: #1c1a26; color: #e5dfea; }
+:root[data-theme='dark'] .home-plan-add-row button { background: #806b91; }
+:root[data-theme='dark'] .home-plan-add-row button:disabled { background: #51495a; }
+:root[data-theme='dark'] .home-plan-list li.is-up-next { border-color: #655574; background: #292432; }
+:root[data-theme='dark'] .home-plan-list li.is-up-next .home-plan-task-number,:root[data-theme='dark'] .home-focus-duration button.is-selected { background: #806b91; color: #fff; }
+:root[data-theme='dark'] .home-plan-task-copy small,:root[data-theme='dark'] .home-focus-up-next small { color: #b0a4b6; }
+:root[data-theme='dark'] .home-plan-remove { color: #b9adbf; }
+:root[data-theme='dark'] .home-plan-remove:hover { background: #493238; color: #f3b5b8; }
+:root[data-theme='dark'] .home-plan-empty { border-color: #403a48; color: #b2a9b7; }
+:root[data-theme='dark'] .home-plan-view-all { color: #d0b8df; }
+:root[data-theme='dark'] .home-focus-duration button { border-color: #403a48; background: #24212d; color: #d0c5d8; }
+:root[data-theme='dark'] .home-focus-duration button.is-selected { border-color: #806b91; }
+@media (max-width: 900px) {
+  .home-focus-planner { grid-template-columns: minmax(0,1fr); }
+  .home-plan-card { min-height: 0; }
+  .home-plan-view-all { margin-top: 10px; }
+  .home-focus-card { min-height: 390px; }
+}
+@media (max-width: 600px) {
+  .home-focus-layout { gap: 11px; }
+  .home-focus-planner { gap: 10px; }
+  .home-plan-card { padding: 16px 13px; border-radius: 15px; }
+  .home-focus-card { min-height: 0; padding: 16px 13px; border-radius: 15px; }
+  .home-focus-side { grid-template-columns: minmax(0,1fr); gap: 10px; }
+  .home-focus-side > .home-focus-tip { grid-column: auto; }
+  .home-focus-card .home-focus-clock { width: 142px; height: 142px; }
+  .home-focus-card .home-focus-clock > span { font-size: 2rem; }
+  .home-plan-add-row select { font-size: .7rem; }
+}
+
 .reminders-page { min-height: calc(100vh - 90px); padding: clamp(22px, 5vw, 54px) 20px; background: #f7f4f8; color: #403646; }
 .reminders-shell { width: min(880px, 100%); margin: 0 auto; }
 .reminders-header { position: relative; padding: 18px 0 25px; }

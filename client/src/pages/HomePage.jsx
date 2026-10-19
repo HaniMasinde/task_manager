@@ -89,7 +89,10 @@ function HomePage({ theme, onToggleTheme }) {
   const [logoutError, setLogoutError] = useState('')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [timerMode, setTimerMode] = useState('focus')
-  const [secondsLeft, setSecondsLeft] = useState(25 * 60)
+  const [secondsLeft, setSecondsLeft] = useState(30 * 60)
+  const [focusMinutes, setFocusMinutes] = useState(30)
+  const [plannedTaskIds, setPlannedTaskIds] = useState([])
+  const [focusTaskToAdd, setFocusTaskToAdd] = useState('')
   const [timerRunning, setTimerRunning] = useState(false)
   const [homeTasks, setHomeTasks] = useState([])
   const [focusHistory, setFocusHistory] = useState([])
@@ -104,6 +107,17 @@ function HomePage({ theme, onToggleTheme }) {
   const [intention, setIntention] = useState(() => {
     try { return localStorage.getItem('task-manager-daily-intention') || '' } catch { return '' }
   })
+  const focusPlanKey = `task-manager-focus-plan:${user?.id || user?.email || user?.username || 'guest'}`
+
+  useEffect(() => {
+    try {
+      const savedPlan = JSON.parse(localStorage.getItem(focusPlanKey) || '[]')
+      setPlannedTaskIds(Array.isArray(savedPlan) ? savedPlan.map(String) : [])
+    } catch {
+      setPlannedTaskIds([])
+    }
+    setTimerRunning(false)
+  }, [focusPlanKey])
 
   useEffect(() => {
     if (!user) return undefined
@@ -114,7 +128,14 @@ function HomePage({ theme, onToggleTheme }) {
       try {
         const data = await getTasks()
         if (active) {
-          setHomeTasks(Array.isArray(data) ? data : [])
+          const tasks = Array.isArray(data) ? data : []
+          setHomeTasks(tasks)
+          const pendingIds = new Set(tasks.filter((task) => task.status !== 'completed').map((task) => String(task.id)))
+          setPlannedTaskIds((current) => {
+            const nextIds = current.filter((id) => pendingIds.has(id))
+            try { localStorage.setItem(focusPlanKey, JSON.stringify(nextIds)) } catch { /* Keep the plan for this session. */ }
+            return nextIds
+          })
           setTasksError('')
         }
       } catch (error) {
@@ -126,7 +147,7 @@ function HomePage({ theme, onToggleTheme }) {
 
     loadHomeTasks()
     return () => { active = false }
-  }, [user])
+  }, [user, focusPlanKey])
 
   useEffect(() => {
     const userId = user?.id || user?.email || user?.username
@@ -159,7 +180,35 @@ function HomePage({ theme, onToggleTheme }) {
   function selectTimerMode(mode) {
     setTimerMode(mode)
     setTimerRunning(false)
-    setSecondsLeft(mode === 'focus' ? 25 * 60 : 5 * 60)
+    setSecondsLeft(mode === 'focus' ? focusMinutes * 60 : 5 * 60)
+  }
+
+  function saveFocusPlan(nextIds) {
+    const normalizedIds = nextIds.map(String)
+    setPlannedTaskIds(normalizedIds)
+    try { localStorage.setItem(focusPlanKey, JSON.stringify(normalizedIds)) } catch { /* Keep the plan for this session. */ }
+  }
+
+  function addTaskToFocusPlan() {
+    if (!focusTaskToAdd || plannedTaskIds.includes(String(focusTaskToAdd))) return
+    saveFocusPlan([...plannedTaskIds, String(focusTaskToAdd)])
+    setFocusTaskToAdd('')
+  }
+
+  function prioritizeFocusTask(taskId) {
+    const normalizedId = String(taskId)
+    saveFocusPlan([normalizedId, ...plannedTaskIds.filter((id) => id !== normalizedId)])
+  }
+
+  function removeTaskFromFocusPlan(taskId) {
+    saveFocusPlan(plannedTaskIds.filter((id) => id !== String(taskId)))
+  }
+
+  function chooseFocusDuration(minutes) {
+    setFocusMinutes(minutes)
+    setTimerMode('focus')
+    setTimerRunning(false)
+    setSecondsLeft(minutes * 60)
   }
 
   function updateIntention(event) {
@@ -215,6 +264,9 @@ function HomePage({ theme, onToggleTheme }) {
   if (user) {
     const todayKey = getNairobiDateKey()
     const pendingTasks = homeTasks.filter((task) => task.status !== 'completed')
+    const plannedTasks = plannedTaskIds.map((id) => pendingTasks.find((task) => String(task.id) === id)).filter(Boolean)
+    const availableFocusTasks = pendingTasks.filter((task) => !plannedTaskIds.includes(String(task.id)))
+    const focusTask = plannedTasks[0]
     const completedTasks = homeTasks.filter((task) => task.status === 'completed')
     const todayTasks = pendingTasks.filter((task) => String(task.due_date || '').slice(0, 10) === todayKey)
     const upcomingTasks = pendingTasks.filter((task) => String(task.due_date || '').slice(0, 10) > todayKey)
@@ -309,20 +361,48 @@ function HomePage({ theme, onToggleTheme }) {
             <div className="home-portal-illustration" aria-hidden="true"><div className="home-portal-illustration-ring" /><FiZap /></div>
           </section>
           <div className="home-focus-layout">
-            <section className="home-focus-card" aria-labelledby="focus-title">
-              <div className="home-focus-card-heading"><div><p className="eyebrow">MAKE A LITTLE PROGRESS</p><h2 id="focus-title">Focus session</h2></div><span className="home-focus-session-badge"><FiTarget aria-hidden="true" /> {timerMode === 'focus' ? 'FOCUS' : 'RESET'}</span></div>
-              <div className={`home-focus-clock${timerRunning ? ' is-running' : ''}`} aria-live="off"><span>{formatTimer(secondsLeft)}</span><small>{secondsLeft === 0 ? 'Session complete' : timerRunning ? 'Stay with it' : 'Ready when you are'}</small></div>
-              <div className="home-focus-mode-switch" role="group" aria-label="Timer mode">
-                <button type="button" className={timerMode === 'focus' ? 'is-selected' : ''} onClick={() => selectTimerMode('focus')}><FiTarget aria-hidden="true" /> Focus · 25 min</button>
-                <button type="button" className={timerMode === 'break' ? 'is-selected' : ''} onClick={() => selectTimerMode('break')}><FiCoffee aria-hidden="true" /> Break · 5 min</button>
-              </div>
-              <div className="home-focus-controls">
-                <button className="home-focus-start" type="button" onClick={() => { if (secondsLeft === 0) setSecondsLeft(timerMode === 'focus' ? 25 * 60 : 5 * 60); setTimerRunning(!timerRunning) }}>
-                  {timerRunning ? <><FiPause aria-hidden="true" /> Pause session</> : <><FiPlay aria-hidden="true" /> {secondsLeft === 0 ? 'Start again' : 'Start focus'}</>}
-                </button>
-                <button className="home-focus-reset" type="button" onClick={() => { setTimerRunning(false); setSecondsLeft(timerMode === 'focus' ? 25 * 60 : 5 * 60) }} aria-label="Reset timer"><FiRotateCcw aria-hidden="true" /></button>
-              </div>
-            </section>
+            <div className="home-focus-planner">
+              <section className="home-plan-card" aria-labelledby="focus-plan-heading">
+                <div className="home-plan-heading"><div><p className="eyebrow">MAKE A REALISTIC PLAN</p><h2 id="focus-plan-heading">Plan your tasks</h2></div><span className="home-plan-count">{plannedTasks.length} planned</span></div>
+                <p className="home-plan-intro">Choose a few tasks to work through, one at a time.</p>
+                <div className="home-plan-add-row">
+                  <label className="visually-hidden" htmlFor="focus-plan-task">Choose a task to add to your focus plan</label>
+                  <select id="focus-plan-task" value={focusTaskToAdd} onChange={(event) => setFocusTaskToAdd(event.target.value)} disabled={availableFocusTasks.length === 0 || tasksLoading}>
+                    <option value="">{tasksLoading ? 'Loading your tasks…' : availableFocusTasks.length ? 'Choose a task…' : 'No more open tasks'}</option>
+                    {availableFocusTasks.map((task) => <option key={task.id} value={task.id}>{task.title}</option>)}
+                  </select>
+                  <button type="button" onClick={addTaskToFocusPlan} disabled={!focusTaskToAdd}><FiPlus aria-hidden="true" /><span>Add</span></button>
+                </div>
+                {tasksError && <p className="home-plan-empty" role="status">Your tasks could not be loaded.</p>}
+                {!tasksLoading && !tasksError && plannedTasks.length === 0 && <p className="home-plan-empty">Add an open task above to build today’s focus plan.</p>}
+                {plannedTasks.length > 0 && <ol className="home-plan-list" aria-label="Planned focus tasks">
+                  {plannedTasks.map((task, index) => <li key={task.id} className={index === 0 ? 'is-up-next' : undefined}>
+                    <button className="home-plan-task-select" type="button" onClick={() => prioritizeFocusTask(task.id)} aria-label={index === 0 ? `${task.title} is up next` : `Move ${task.title} to the top of the plan`}>
+                      <span className="home-plan-task-number">{index === 0 ? <FiPlay aria-hidden="true" /> : index + 1}</span>
+                      <span className="home-plan-task-copy"><strong>{task.title}</strong><small>{index === 0 ? 'Up next' : `${String(task.priority || 'medium')} priority`}</small></span>
+                    </button>
+                    <button className="home-plan-remove" type="button" onClick={() => removeTaskFromFocusPlan(task.id)} aria-label={`Remove ${task.title} from focus plan`}><FiX aria-hidden="true" /></button>
+                  </li>)}
+                </ol>}
+                <Link className="home-plan-view-all" to="/tasks">Manage tasks <FiArrowRight aria-hidden="true" /></Link>
+              </section>
+
+              <section className="home-focus-card" aria-labelledby="focus-title">
+                <div className="home-focus-card-heading"><div><p className="eyebrow">ONE THING AT A TIME</p><h2 id="focus-title">Focus timer</h2></div><span className="home-focus-session-badge"><FiTarget aria-hidden="true" /> {timerMode === 'focus' ? 'FOCUS' : 'BREAK'}</span></div>
+                <div className="home-focus-up-next"><small>{focusTask ? 'UP NEXT' : 'READY WHEN YOU ARE'}</small><strong>{focusTask?.title || 'Choose a task to begin'}</strong>{focusTask && <span className={`home-next-task-priority priority-${String(focusTask.priority || 'medium').toLowerCase()}`}>{focusTask.priority || 'medium'} priority</span>}</div>
+                <div className={`home-focus-clock${timerRunning ? ' is-running' : ''}`} aria-live="off"><span>{formatTimer(secondsLeft)}</span><small>{secondsLeft === 0 ? 'Session complete' : timerRunning ? 'Stay with it' : 'Take it one step at a time'}</small></div>
+                <div className="home-focus-duration" role="group" aria-label="Focus session length">
+                  {[15, 30, 60].map((minutes) => <button key={minutes} type="button" className={timerMode === 'focus' && focusMinutes === minutes ? 'is-selected' : ''} aria-pressed={timerMode === 'focus' && focusMinutes === minutes} onClick={() => chooseFocusDuration(minutes)}>{minutes} min</button>)}
+                  <button type="button" className={`home-focus-break${timerMode === 'break' ? ' is-selected' : ''}`} aria-pressed={timerMode === 'break'} onClick={() => selectTimerMode('break')}><FiCoffee aria-hidden="true" /> Break</button>
+                </div>
+                <div className="home-focus-controls">
+                  <button className="home-focus-start" type="button" onClick={() => { if (secondsLeft === 0) setSecondsLeft(timerMode === 'focus' ? focusMinutes * 60 : 5 * 60); setTimerRunning(!timerRunning) }} disabled={timerMode === 'focus' && !focusTask}>
+                    {timerRunning ? <><FiPause aria-hidden="true" /> Pause session</> : <><FiPlay aria-hidden="true" /> {secondsLeft === 0 ? 'Start again' : timerMode === 'break' ? 'Start break' : 'Start focus'}</>}
+                  </button>
+                  <button className="home-focus-reset" type="button" onClick={() => { setTimerRunning(false); setSecondsLeft(timerMode === 'focus' ? focusMinutes * 60 : 5 * 60) }} aria-label="Reset timer"><FiRotateCcw aria-hidden="true" /></button>
+                </div>
+              </section>
+            </div>
             <div className="home-focus-side">
               <section className="home-intention-card"><span className="home-focus-side-icon"><FiEdit3 aria-hidden="true" /></span><p className="eyebrow">SET YOUR DIRECTION</p><h2>What would make today feel meaningful?</h2><label className="home-intention-label" htmlFor="daily-intention">Your intention</label><textarea id="daily-intention" value={intention} onChange={updateIntention} maxLength={180} placeholder="For example: finish the first draft…" /><div className="home-intention-footer"><span>{intention.length}/180</span><span><FiCheckCircle aria-hidden="true" /> Saved on this device</span></div></section>
               <section className={`home-quick-task-card${quickTaskSaved ? ' is-saved' : ''}`} aria-labelledby="quick-task-heading">
