@@ -3532,7 +3532,7 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 
 .home-header-actions { display: flex; align-items: center; gap: 8px; }
 
-@media (max-width: 575px) {
+@media (max-width: 600px) {
   .home-workspace {
     display: grid;
     min-height: calc(100vh - 72px);
@@ -3727,7 +3727,7 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 @media (prefers-reduced-motion: reduce) {
   .home-sidebar-backdrop { animation: none; }
 }
-@media (prefers-reduced-motion: reduce) and (max-width: 575px) { .home-sidebar { transition: none; } }
+@media (prefers-reduced-motion: reduce) and (max-width: 600px) { .home-sidebar { transition: none; } }
 
 /* Home page motion: gentle entrances, a lively brand mark, and a calm timer pulse. */
 .home-portal-header { animation: home-enter-up 460ms cubic-bezier(.2,.75,.25,1) both; }
@@ -4723,7 +4723,7 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 :root[data-theme='dark'] .home-sidebar { scrollbar-color: #51475b transparent; }
 :root[data-theme='dark'] .home-sidebar-bottom { border-color: #383341; }
 :root[data-theme='dark'] .home-sidebar-bottom { background: #1c1a26; }
-@media (max-width: 575px) {
+@media (max-width: 600px) {
   .home-sidebar { overflow-y: hidden; }
   .home-sidebar.is-mobile-open { overflow-y: auto; }
   .home-sidebar.is-mobile-open .home-sidebar-bottom { flex: 0 0 auto; }
