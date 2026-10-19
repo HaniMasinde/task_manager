@@ -43,6 +43,17 @@ function LoginPage() {
     <main className="auth-page">
       <div className="auth-shell">
       <Link className="auth-brand" to="/" aria-label="Wuod Atieno home"><span className="brand-mark" aria-hidden="true">W</span><span>Wuod Atieno</span></Link>
+      <div className="auth-layout">
+      <aside className="auth-aside" aria-label="About your workspace">
+        <div className="auth-aside-copy">
+          <p className="auth-aside-kicker">YOUR SPACE TO FOCUS</p>
+          <h2>Make room for what matters.</h2>
+          <p>Keep your tasks in one calm, clear workspace and make steady progress on the things you care about.</p>
+          <div className="auth-aside-note"><span aria-hidden="true">✓</span> A clearer day starts here</div>
+        </div>
+        <span className="auth-aside-orbit auth-aside-orbit-one" aria-hidden="true" />
+        <span className="auth-aside-orbit auth-aside-orbit-two" aria-hidden="true" />
+      </aside>
       <section className="auth-card">
         <p className="auth-card-kicker">YOUR WORKSPACE AWAITS</p>
         <h1 className="login-heading">Welcome back</h1>
@@ -101,6 +112,7 @@ function LoginPage() {
           Need an account? <Link to="/register">Register</Link>
         </p>
       </section>
+      </div>
       </div>
     </main>
   )

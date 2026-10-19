@@ -1,9 +1,10 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiAlertCircle, FiArrowUpRight, FiBarChart2, FiCalendar, FiCheckCircle, FiClock, FiMoon, FiSun, FiUser } from 'react-icons/fi';
+import { FiAlertCircle, FiArrowUpRight, FiBarChart2, FiCalendar, FiCheckCircle, FiClock, FiHome, FiMoon, FiSun, FiTrendingUp, FiUser } from 'react-icons/fi';
 import { getDashboard } from '../services/dashboardService';
 import { useAuth } from '../context/useAuth.js';
+import TaskReminderBell from '../components/TaskReminderBell.jsx'
 
 function formatDueDate(value) {
   const dateOnly = value instanceof Date
@@ -23,6 +24,20 @@ function formatDueDate(value) {
   });
 }
 
+function getDueStatus(task) {
+  if (task.status === 'completed') return { label: 'Completed', kind: 'completed' }
+  const dueDate = String(task.due_date || '').slice(0, 10)
+  if (!dueDate) return { label: 'No due date', kind: 'no-date' }
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(new Date())
+  const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]))
+  const today = `${values.year}-${values.month}-${values.day}`
+  if (dueDate < today) return { label: 'Overdue', kind: 'overdue' }
+  if (dueDate === today) return { label: 'Due today', kind: 'today' }
+  return { label: 'Upcoming', kind: 'upcoming' }
+}
+
 function TaskList({ tasks, emptyMessage }) {
   if (tasks.length === 0) {
     return <p className="dashboard-empty">{emptyMessage}</p>;
@@ -30,7 +45,9 @@ function TaskList({ tasks, emptyMessage }) {
 
   return (
     <ul className="dashboard-task-list">
-      {tasks.map((task) => (
+      {tasks.map((task) => {
+        const dueStatus = getDueStatus(task)
+        return (
         <li key={task.id} className="dashboard-task-item">
           <span className="dashboard-task-marker" aria-hidden="true"><FiCheckCircle /></span>
           <div className="dashboard-task-copy">
@@ -39,10 +56,12 @@ function TaskList({ tasks, emptyMessage }) {
           </div>
           <div className="dashboard-task-meta">
             <span className={`dashboard-priority priority-${String(task.priority || 'medium').toLowerCase()}`}>{task.priority || 'Medium'}</span>
+            <span className={`dashboard-status-chip dashboard-status-${dueStatus.kind}`}>{dueStatus.label}</span>
             <time dateTime={String(task.due_date || '').slice(0, 10)}>{formatDueDate(task.due_date)}</time>
           </div>
         </li>
-      ))}
+        )
+      })}
     </ul>
   );
 }
@@ -135,7 +154,7 @@ function DashboardPage({ theme, onToggleTheme, embedded = false }) {
               <p className="dashboard-description">Here’s your day at a glance. Keep your priorities moving.</p>
             </div>
             <div className="dashboard-header-side">
-              <div className="dashboard-user-actions">
+              <div className="dashboard-header-controls">
                 <button
                   type="button"
                   className="theme-toggle"
@@ -147,12 +166,11 @@ function DashboardPage({ theme, onToggleTheme, embedded = false }) {
                     ? <><FiSun aria-hidden="true" /><span>Light</span></>
                     : <><FiMoon aria-hidden="true" /><span>Dark</span></>}
                 </button>
-                <div className="dashboard-profile">
-                  {user?.profile_picture
-                    ? <img src={user.profile_picture} alt="" />
-                    : <FiUser aria-hidden="true" />}
-                  <span>{user?.name || user?.username || 'My account'}</span>
-                </div>
+              </div>
+              <div className="dashboard-user-actions">
+                <Link className="dashboard-home-link" to="/" aria-label="Go to home"><FiHome aria-hidden="true" /><span>Home</span></Link>
+                <Link className="dashboard-focus-link" to="/#weekly-focus"><FiTrendingUp aria-hidden="true" /><span>Weekly focus</span></Link>
+                <TaskReminderBell />
               </div>
               <div className="dashboard-header-progress">
                 <div
@@ -241,6 +259,11 @@ function DashboardPage({ theme, onToggleTheme, embedded = false }) {
           </div>
 
           <footer className="dashboard-actions">
+            <Link className="dashboard-account-footer" to="/account" aria-label={`Open account settings for ${user?.name || user?.username || 'my account'}`}>
+              {user?.profile_picture ? <img src={user.profile_picture} alt="" /> : <span className="dashboard-account-footer-avatar"><FiUser aria-hidden="true" /></span>}
+              <span><small>ACCOUNT</small><strong>{user?.name || user?.username || 'My account'}</strong></span>
+              <FiArrowUpRight aria-hidden="true" />
+            </Link>
             <Link to="/tasks" className="dashboard-primary-link">Manage all tasks</Link>
           </footer>
         </div>

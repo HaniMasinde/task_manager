@@ -59,6 +59,17 @@ function RegisterPage() {
     <main className="auth-page">
       <div className="auth-shell">
       <Link className="auth-brand" to="/" aria-label="Wuod Atieno home"><span className="brand-mark" aria-hidden="true">W</span><span>Wuod Atieno</span></Link>
+      <div className="auth-layout">
+      <aside className="auth-aside" aria-label="About your workspace">
+        <div className="auth-aside-copy">
+          <p className="auth-aside-kicker">A FRESH START</p>
+          <h2>Bring your plans into focus.</h2>
+          <p>Gather your priorities, track what’s next, and make progress one task at a time.</p>
+          <div className="auth-aside-note"><span aria-hidden="true">✓</span> Your next chapter starts here</div>
+        </div>
+        <span className="auth-aside-orbit auth-aside-orbit-one" aria-hidden="true" />
+        <span className="auth-aside-orbit auth-aside-orbit-two" aria-hidden="true" />
+      </aside>
       <section className="auth-card">
         <p className="auth-card-kicker">A FRESH START</p>
         <h1>Create an account</h1>
@@ -166,6 +177,7 @@ function RegisterPage() {
           Already registered? <Link to="/login">Sign in</Link>
         </p>
       </section>
+      </div>
       </div>
     </main>
   )

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FiArrowLeft, FiUser } from 'react-icons/fi'
 import { useAuth } from '../context/useAuth.js'
+import { recordTaskCompletion } from '../services/focusHistory.js'
 import {
   getTasks,
   createTask,
@@ -17,6 +18,29 @@ function getLocalDateString() {
   const month = String(today.getMonth() + 1).padStart(2, '0')
   const day = String(today.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
+}
+
+function getNairobiDateString() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(new Date())
+  const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]))
+  return `${values.year}-${values.month}-${values.day}`
+}
+
+function getTaskStatusChip(task) {
+  if (task.status === 'completed') return { label: 'Completed', kind: 'completed' }
+  const dueDate = String(task.due_date || '').slice(0, 10)
+  if (!dueDate) return { label: 'No due date', kind: 'no-date' }
+  const today = getNairobiDateString()
+  if (dueDate < today) return { label: 'Overdue', kind: 'overdue' }
+  if (dueDate === today) return { label: 'Due today', kind: 'today' }
+  return { label: 'Upcoming', kind: 'upcoming' }
+}
+
+function formatTaskDate(value) {
+  const date = new Date(`${String(value).slice(0, 10)}T00:00:00`)
+  return date.toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Africa/Nairobi' })
 }
 
 function isValidDateString(value) {
@@ -146,7 +170,9 @@ function TasksPage() {
     setError('')
 
     try {
+      const completedTask = tasks.find((task) => task.id === taskId)
       await completeTask(taskId)
+      recordTaskCompletion(user?.id || user?.email || user?.username, completedTask)
 
       setTasks((currentTasks) =>
         currentTasks.map((task) =>
@@ -434,9 +460,15 @@ function TasksPage() {
 
           {!tasksLoading && tasks.length > 0 && (
             <ul className="task-list">
-              {tasks.map((task) => (
+              {tasks.map((task) => {
+                const statusChip = getTaskStatusChip(task)
+                return (
                 <li className="task-item" key={task.id}>
                   <h2>{task.title}</h2>
+                  <div className="task-card-chips" role="group" aria-label="Task status and priority">
+                    <span className={`task-status-chip task-status-${statusChip.kind}`}>{statusChip.label}</span>
+                    <span className={`task-priority-chip task-priority-${String(task.priority || 'medium').toLowerCase()}`}>{task.priority || 'Medium'} priority</span>
+                  </div>
 
                   {editingTaskId === task.id && (
                   <form className="task-form task-edit-form" onSubmit={handleUpdateTask}>
@@ -510,20 +542,8 @@ function TasksPage() {
                     <p className="task-description">{task.description}</p>
                   )}
 
-                  <p>
-                    Priority:{' '}
-                    <span className={`priority-badge priority-${String(task.priority).toLowerCase()}`}>
-                      {task.priority}
-                    </span>
-                  </p>
+                  {task.due_date && <p className="task-due-line">Due {formatTaskDate(task.due_date)}</p>}
 
-                  <p>
-                    Status:{' '}
-                    <span className={`status-badge status-${String(task.status).toLowerCase()}`}>
-                      {task.status}
-                    </span>
-                  </p>
-                
                   <div className="task-actions">
                     {task.status !== 'completed' && (
                       <button
@@ -557,13 +577,9 @@ function TasksPage() {
                   </div>
 
 
-                  {task.due_date && (
-                    <p>
-                      Due: {new Date(task.due_date).toLocaleDateString()}
-                    </p>
-                  )}
                 </li>
-              ))}
+                )
+              })}
             </ul>
           )}
         </section>

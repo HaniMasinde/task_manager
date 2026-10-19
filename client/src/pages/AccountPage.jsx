@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { FiCamera, FiEye, FiEyeOff, FiLogOut, FiTrash2, FiUser } from 'react-icons/fi'
+import { Link, useNavigate } from 'react-router-dom'
+import { FiCamera, FiEye, FiEyeOff, FiHome, FiLogOut, FiTrash2, FiUser } from 'react-icons/fi'
 import { useAuth } from '../context/useAuth.js'
 import { deleteAccount, updatePassword, updateProfile } from '../services/accountService.js'
 
@@ -163,15 +163,20 @@ function AccountPage() {
   return (
     <main className="account-page">
       <div className="account-shell">
+        <div className="account-topbar">
+          <Link className="account-home-link" to="/" aria-label="Go to home"><FiHome aria-hidden="true" /><span>Back to home</span></Link>
+          <span className="account-topbar-label">Workspace <span aria-hidden="true">/</span> Account</span>
+        </div>
         <header className="account-header">
           <div className="account-avatar" aria-hidden="true">
             {picture ? <img src={picture} alt="" /> : <FiUser />}
           </div>
-          <div>
-            <p className="account-eyebrow">YOUR ACCOUNT</p>
+          <div className="account-header-copy">
+            <p className="account-eyebrow">ACCOUNT SETTINGS</p>
             <h1>Account settings</h1>
-            <p>Welcome, {user?.name || user?.username || 'there'}. Manage your profile, security, and account access.</p>
+            <p>Keep your personal details and sign-in security up to date.</p>
           </div>
+          <span className="account-header-badge">Personal workspace</span>
         </header>
 
         {notice && <p className="account-message account-success" role="status">{notice}</p>}

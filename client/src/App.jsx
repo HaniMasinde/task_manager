@@ -9,6 +9,8 @@ import RegisterPage from './pages/RegisterPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import TasksPage from './pages/TasksPage.jsx'
 import AccountPage from './pages/AccountPage.jsx'
+import CalendarPage from './pages/CalendarPage.jsx'
+import RemindersPage from './pages/RemindersPage.jsx'
 import SiteFooter from './components/SiteFooter.jsx'
 import './App.css'
 
@@ -51,6 +53,8 @@ function App() {
 
             <Route element={<ProtectedRoute />}>
               <Route path="/tasks" element={<TasksPage />} />
+              <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/reminders" element={<RemindersPage />} />
               <Route path="/account" element={<AccountPage />} />
               <Route
   path="/dashboard"

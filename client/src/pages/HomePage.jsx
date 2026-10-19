@@ -1,11 +1,12 @@
 
 
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/useAuth.js'
 import {
   FiHome,
   FiCalendar,
+  FiBell,
   FiCheckCircle,
   FiCheckSquare,
   FiArrowRight,
@@ -24,11 +25,54 @@ import {
   FiZap,
   FiPause,
   FiPlay,
+  FiPlus,
   FiRotateCcw,
   FiCoffee,
   FiMenu,
   FiX,
 } from 'react-icons/fi'
+import { createTask, getTasks } from '../services/taskService.js'
+import { getFocusHistory } from '../services/focusHistory.js'
+import TaskReminderBell from '../components/TaskReminderBell.jsx'
+
+function getNairobiDateKey(date = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Africa/Nairobi',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date)
+  const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]))
+  return `${values.year}-${values.month}-${values.day}`
+}
+
+function formatTaskDueDate(value) {
+  if (!value) return 'No due date'
+  const date = new Date(`${String(value).slice(0, 10)}T00:00:00`)
+  return date.toLocaleDateString('en-KE', {
+    timeZone: 'Africa/Nairobi',
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  })
+}
+
+function getFocusWeekDays(date = new Date()) {
+  const todayKey = getNairobiDateKey(date)
+  const today = new Date(`${todayKey}T00:00:00Z`)
+  const mondayOffset = (today.getUTCDay() + 6) % 7
+  const monday = new Date(today)
+  monday.setUTCDate(today.getUTCDate() - mondayOffset)
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const day = new Date(monday)
+    day.setUTCDate(monday.getUTCDate() + index)
+    return {
+      key: day.toISOString().slice(0, 10),
+      label: day.toLocaleDateString('en-KE', { weekday: 'short', timeZone: 'Africa/Nairobi' }),
+    }
+  })
+}
 
 function formatTimer(seconds) {
   const minutes = Math.floor(seconds / 60).toString().padStart(2, '0')
@@ -38,6 +82,7 @@ function formatTimer(seconds) {
 
 function HomePage({ theme, onToggleTheme }) {
   const { user, loading, logout } = useAuth()
+  const location = useLocation()
   const navigate = useNavigate()
   const [loggingOut, setLoggingOut] = useState(false)
   const [logoutError, setLogoutError] = useState('')
@@ -45,9 +90,55 @@ function HomePage({ theme, onToggleTheme }) {
   const [timerMode, setTimerMode] = useState('focus')
   const [secondsLeft, setSecondsLeft] = useState(25 * 60)
   const [timerRunning, setTimerRunning] = useState(false)
+  const [homeTasks, setHomeTasks] = useState([])
+  const [focusHistory, setFocusHistory] = useState([])
+  const [tasksLoading, setTasksLoading] = useState(true)
+  const [tasksError, setTasksError] = useState('')
+  const [quickTaskTitle, setQuickTaskTitle] = useState('')
+  const [quickTaskDueDate, setQuickTaskDueDate] = useState(() => getNairobiDateKey())
+  const [quickTaskPriority, setQuickTaskPriority] = useState('medium')
+  const [quickTaskError, setQuickTaskError] = useState('')
+  const [quickTaskSaved, setQuickTaskSaved] = useState(false)
+  const [savingQuickTask, setSavingQuickTask] = useState(false)
   const [intention, setIntention] = useState(() => {
     try { return localStorage.getItem('task-manager-daily-intention') || '' } catch { return '' }
   })
+
+  useEffect(() => {
+    if (!user) return undefined
+    let active = true
+
+    async function loadHomeTasks() {
+      setTasksLoading(true)
+      try {
+        const data = await getTasks()
+        if (active) {
+          setHomeTasks(Array.isArray(data) ? data : [])
+          setTasksError('')
+        }
+      } catch (error) {
+        if (active) setTasksError(error.message || 'Could not load your task overview.')
+      } finally {
+        if (active) setTasksLoading(false)
+      }
+    }
+
+    loadHomeTasks()
+    return () => { active = false }
+  }, [user])
+
+  useEffect(() => {
+    const userId = user?.id || user?.email || user?.username
+    setFocusHistory(getFocusHistory(userId))
+  }, [user])
+
+  useEffect(() => {
+    if (location.pathname !== '/' || location.hash !== '#weekly-focus' || loading || !user) return undefined
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById('weekly-focus')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [location.pathname, location.hash, loading, user])
 
   useEffect(() => {
     if (!timerRunning) return undefined
@@ -76,6 +167,34 @@ function HomePage({ theme, onToggleTheme }) {
     try { localStorage.setItem('task-manager-daily-intention', value) } catch { /* Keep the intention for this session. */ }
   }
 
+  async function handleQuickTaskSubmit(event) {
+    event.preventDefault()
+    setQuickTaskError('')
+    setQuickTaskSaved(false)
+    if (!quickTaskTitle.trim()) {
+      setQuickTaskError('Add a task name first.')
+      return
+    }
+
+    setSavingQuickTask(true)
+    try {
+      const task = await createTask({
+        title: quickTaskTitle.trim(),
+        description: '',
+        dueDate: quickTaskDueDate,
+        priority: quickTaskPriority,
+      })
+      setHomeTasks((currentTasks) => [task, ...currentTasks])
+      setQuickTaskTitle('')
+      setQuickTaskSaved(true)
+      window.setTimeout(() => setQuickTaskSaved(false), 2800)
+    } catch (error) {
+      setQuickTaskError(error.message || 'Could not save this task.')
+    } finally {
+      setSavingQuickTask(false)
+    }
+  }
+
   async function handleLogout() {
     setLoggingOut(true)
     setLogoutError('')
@@ -93,6 +212,23 @@ function HomePage({ theme, onToggleTheme }) {
   }
 
   if (user) {
+    const todayKey = getNairobiDateKey()
+    const pendingTasks = homeTasks.filter((task) => task.status !== 'completed')
+    const completedTasks = homeTasks.filter((task) => task.status === 'completed')
+    const todayTasks = pendingTasks.filter((task) => String(task.due_date || '').slice(0, 10) === todayKey)
+    const upcomingTasks = pendingTasks.filter((task) => String(task.due_date || '').slice(0, 10) > todayKey)
+    const nextTask = pendingTasks
+      .filter((task) => task.due_date)
+      .sort((first, second) => String(first.due_date).localeCompare(String(second.due_date)))[0]
+    const completionRate = homeTasks.length ? Math.round((completedTasks.length / homeTasks.length) * 100) : 0
+    const focusWeekDays = getFocusWeekDays()
+    const focusDayCounts = focusWeekDays.map((day) => ({
+      ...day,
+      count: focusHistory.filter((event) => getNairobiDateKey(new Date(event.completedAt)) === day.key).length,
+    }))
+    const weeklyCompletions = focusDayCounts.reduce((total, day) => total + day.count, 0)
+    const maxDailyCompletions = Math.max(1, ...focusDayCounts.map((day) => day.count))
+
     return (
       <div className="home-workspace">
         {sidebarOpen && (
@@ -123,6 +259,17 @@ function HomePage({ theme, onToggleTheme }) {
             <Link className="is-active" to="/" aria-current="page" title="Home" onClick={() => setSidebarOpen(false)}><FiHome aria-hidden="true" /><span>Home</span></Link>
             <Link to="/dashboard" title="Dashboard" onClick={() => setSidebarOpen(false)}><FiBarChart2 aria-hidden="true" /><span>Dashboard</span></Link>
             <Link to="/tasks" title="My Tasks" onClick={() => setSidebarOpen(false)}><FiCheckSquare aria-hidden="true" /><span>My Tasks</span></Link>
+            <Link to="/calendar" title="Calendar" onClick={() => setSidebarOpen(false)}><FiCalendar aria-hidden="true" /><span>Calendar</span></Link>
+          </nav>
+          <div className="home-sidebar-section-label">Daily tools</div>
+          <nav className="home-sidebar-nav" aria-label="Daily tools">
+            <Link to="/#focus-title" title="Focus session" onClick={() => setSidebarOpen(false)}><FiTarget aria-hidden="true" /><span>Focus session</span></Link>
+            <Link to="/#daily-intention" title="Daily intention" onClick={() => setSidebarOpen(false)}><FiEdit3 aria-hidden="true" /><span>Daily intention</span></Link>
+            <Link to="/#weekly-focus" title="Weekly focus" onClick={() => setSidebarOpen(false)}><FiTrendingUp aria-hidden="true" /><span>Weekly focus</span></Link>
+            <Link to="/reminders" title="Reminders" onClick={() => setSidebarOpen(false)}><FiBell aria-hidden="true" /><span>Reminders</span></Link>
+          </nav>
+          <div className="home-sidebar-section-label">Account</div>
+          <nav className="home-sidebar-nav" aria-label="Account navigation">
             <Link to="/account" title="Account settings" onClick={() => setSidebarOpen(false)}><FiSettings aria-hidden="true" /><span>Account settings</span></Link>
           </nav>
           <div className="home-sidebar-bottom">
@@ -141,9 +288,15 @@ function HomePage({ theme, onToggleTheme }) {
         <main className="home-portal">
           <header className="home-portal-header">
             <div><p className="eyebrow">YOUR PERSONAL WORKSPACE</p><p className="home-portal-date">{new Date().toLocaleDateString('en-KE', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Africa/Nairobi' })}</p></div>
-            <button className="theme-toggle" type="button" onClick={onToggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`} title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
-              {theme === 'light' ? <FiMoon aria-hidden="true" /> : <FiSun aria-hidden="true" />}
-            </button>
+            <div className="home-header-actions">
+              <button className="home-header-menu" type="button" aria-label="Open navigation menu" aria-expanded={sidebarOpen} aria-controls="home-sidebar-navigation" onClick={() => setSidebarOpen(true)}>
+                <FiMenu aria-hidden="true" />
+              </button>
+              <TaskReminderBell />
+              <button className="theme-toggle" type="button" onClick={onToggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`} title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
+                {theme === 'light' ? <FiMoon aria-hidden="true" /> : <FiSun aria-hidden="true" />}
+              </button>
+            </div>
           </header>
           <section className="home-portal-hero home-focus-hero">
             <div className="home-portal-hero-copy">
@@ -170,9 +323,81 @@ function HomePage({ theme, onToggleTheme }) {
             </section>
             <div className="home-focus-side">
               <section className="home-intention-card"><span className="home-focus-side-icon"><FiEdit3 aria-hidden="true" /></span><p className="eyebrow">SET YOUR DIRECTION</p><h2>What would make today feel meaningful?</h2><label className="home-intention-label" htmlFor="daily-intention">Your intention</label><textarea id="daily-intention" value={intention} onChange={updateIntention} maxLength={180} placeholder="For example: finish the first draft…" /><div className="home-intention-footer"><span>{intention.length}/180</span><span><FiCheckCircle aria-hidden="true" /> Saved on this device</span></div></section>
+              <section className={`home-quick-task-card${quickTaskSaved ? ' is-saved' : ''}`} aria-labelledby="quick-task-heading">
+                <div className="home-quick-task-heading"><span><FiPlus aria-hidden="true" /></span><div><p className="eyebrow">CATCH IT WHILE IT'S FRESH</p><h2 id="quick-task-heading">Quick add</h2></div></div>
+                <form onSubmit={handleQuickTaskSubmit}>
+                  <label className="visually-hidden" htmlFor="quick-task-title">Task name</label>
+                  <input id="quick-task-title" type="text" value={quickTaskTitle} onChange={(event) => setQuickTaskTitle(event.target.value)} maxLength={150} placeholder="What needs to get done?" required />
+                  <div className="home-quick-task-submit-row">
+                    <label htmlFor="quick-task-date">Due</label>
+                    <input id="quick-task-date" type="date" min={todayKey} value={quickTaskDueDate} onChange={(event) => setQuickTaskDueDate(event.target.value)} required />
+                    <label className="visually-hidden" htmlFor="quick-task-priority">Priority</label>
+                    <select id="quick-task-priority" value={quickTaskPriority} onChange={(event) => setQuickTaskPriority(event.target.value)} aria-label="Task priority">
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                    <button type="submit" disabled={savingQuickTask}>{savingQuickTask ? 'Adding…' : <><FiPlus aria-hidden="true" /> Add</>}</button>
+                  </div>
+                  {quickTaskError && <p className="home-quick-task-error" role="alert">{quickTaskError}</p>}
+                  {quickTaskSaved && <p className="home-quick-task-success" role="status"><FiCheckCircle aria-hidden="true" /> Added to your tasks</p>}
+                </form>
+              </section>
               <section className="home-focus-tip"><span><FiZap aria-hidden="true" /></span><div><strong>A gentle reminder</strong><p>You don’t need to finish everything today. Just decide what deserves your attention next.</p></div></section>
             </div>
           </div>
+          <section className="home-next-task" aria-labelledby="home-next-task-heading">
+            <div className="home-next-task-icon"><FiFlag aria-hidden="true" /></div>
+            <div className="home-next-task-copy">
+              <p className="eyebrow">NEXT UP</p>
+              <h2 id="home-next-task-heading">{tasksLoading ? 'Finding your next task…' : tasksError ? 'Could not load your next task' : nextTask?.title || 'You’re all caught up'}</h2>
+              {!tasksLoading && nextTask && <p>Due {formatTaskDueDate(nextTask.due_date)}</p>}
+              {!tasksLoading && !tasksError && !nextTask && <p>Add a due date to a task and it’ll show up here.</p>}
+            </div>
+            {!tasksLoading && nextTask && <span className={`home-next-task-priority priority-${String(nextTask.priority || 'medium').toLowerCase()}`}>{nextTask.priority || 'medium'} priority</span>}
+            <Link to="/tasks" className="home-next-task-link" aria-label={nextTask ? `Open tasks to work on ${nextTask.title}` : 'Open tasks'}><FiArrowRight aria-hidden="true" /></Link>
+          </section>
+          <section className="home-task-snapshot" aria-labelledby="home-task-snapshot-heading">
+            <div className="home-task-snapshot-heading">
+              <div><p className="eyebrow">A QUICK LOOK</p><h2 id="home-task-snapshot-heading">Your task pulse</h2></div>
+              <Link to="/dashboard">Open dashboard <FiArrowRight aria-hidden="true" /></Link>
+            </div>
+            {tasksError ? (
+              <p className="home-task-snapshot-message" role="alert">{tasksError}</p>
+            ) : (
+              <>
+                <div className="home-task-snapshot-stats">
+                  <div><span>Due today</span><strong>{tasksLoading ? '—' : todayTasks.length}</strong></div>
+                  <div><span>Upcoming</span><strong>{tasksLoading ? '—' : upcomingTasks.length}</strong></div>
+                  <div><span>Completed</span><strong>{tasksLoading ? '—' : completedTasks.length}</strong></div>
+                  <div className="home-task-snapshot-progress"><div><span>Overall progress</span><strong>{tasksLoading ? '—' : `${completionRate}%`}</strong></div><span className="home-task-progress-track" role="progressbar" aria-label="Task completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow={tasksLoading ? 0 : completionRate}><span style={{ width: tasksLoading ? '0%' : `${completionRate}%` }} /></span></div>
+                </div>
+                {!tasksLoading && todayTasks.length > 0 && (
+                  <ul className="home-task-snapshot-list">
+                    {todayTasks.slice(0, 3).map((task) => <li key={task.id}><span aria-hidden="true" /><span>{task.title}</span></li>)}
+                    {todayTasks.length > 3 && <li className="home-task-more">+{todayTasks.length - 3} more due today</li>}
+                  </ul>
+                )}
+                {!tasksLoading && todayTasks.length === 0 && <p className="home-task-snapshot-message">Nothing due today. A good day to get ahead or take a breather.</p>}
+              </>
+            )}
+          </section>
+          <section id="weekly-focus" className="home-weekly-focus" aria-labelledby="home-weekly-focus-heading">
+            <div className="home-weekly-focus-heading">
+              <div><p className="eyebrow">SMALL WINS ADD UP</p><h2 id="home-weekly-focus-heading">Your week in focus</h2></div>
+              <div className="home-weekly-focus-total"><strong>{weeklyCompletions}</strong><span>{weeklyCompletions === 1 ? 'task' : 'tasks'} completed</span></div>
+            </div>
+            <div className="home-weekly-focus-chart" role="img" aria-label={`${weeklyCompletions} tasks completed this week. Daily totals: ${focusDayCounts.map((day) => `${day.label} ${day.count}`).join(', ')}.`}>
+              {focusDayCounts.map((day) => (
+                <div className="home-weekly-focus-day" key={day.key}>
+                  <span className="home-weekly-focus-count">{day.count || ''}</span>
+                  <div className="home-weekly-focus-track"><span style={{ height: `${day.count ? Math.max(12, (day.count / maxDailyCompletions) * 100) : 0}%` }} /></div>
+                  <span className="home-weekly-focus-label">{day.label}</span>
+                </div>
+              ))}
+            </div>
+            <p className="home-weekly-focus-note">Progress is tracked on this device from the moment you complete a task.</p>
+          </section>
         </main>
       </div>
     )
