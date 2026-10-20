@@ -28,28 +28,37 @@ function SiteFooter() {
           </div>
           <div className="footer-connect">
             <h2>Stay connected</h2>
-            <nav className="footer-socials" aria-label="Social media and contact">
-              {socialLinks.map(({ label, href, icon: Icon }) => (
-                <a
-                  key={label}
-                  className={`footer-social-link footer-social-${label.toLowerCase()}`}
-                  href={href}
-                  aria-label={label}
-                  title={label}
-                  data-tooltip={label}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Icon aria-hidden="true" />
-                </a>
-              ))}
-              <a className="footer-social-link footer-social-phone" href="tel:0113745958" aria-label="Call Wuod Atieno at 0113745958" title="Call 0113745958" data-tooltip="Call">
-                <FiPhone aria-hidden="true" />
-              </a>
-              <a className="footer-social-link footer-social-message" href="sms:0794358892" aria-label="Send an SMS to Wuod Atieno at 0794358892" title="SMS 0794358892" data-tooltip="Message">
-                <FiMessageCircle aria-hidden="true" />
-              </a>
-            </nav>
+            <div className="footer-connect-groups">
+              <div className="footer-link-group">
+                <h3>Follow</h3>
+                <nav className="footer-socials" aria-label="Social media">
+                  {socialLinks.map(({ label, href, icon: Icon }) => (
+                    <a
+                      key={label}
+                      className={`footer-social-link footer-social-${label.toLowerCase()}`}
+                      href={href}
+                      aria-label={label}
+                      title={label}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Icon aria-hidden="true" />
+                    </a>
+                  ))}
+                </nav>
+              </div>
+              <div className="footer-link-group">
+                <h3>Contact</h3>
+                <nav className="footer-contact-links" aria-label="Contact Wuod Atieno">
+                  <a className="footer-contact-link footer-social-phone" href="tel:0113745958" aria-label="Call Wuod Atieno at 0113745958">
+                    <FiPhone aria-hidden="true" /><span>Call</span>
+                  </a>
+                  <a className="footer-contact-link footer-social-message" href="sms:0794358892" aria-label="Send an SMS to Wuod Atieno at 0794358892">
+                    <FiMessageCircle aria-hidden="true" /><span>Message</span>
+                  </a>
+                </nav>
+              </div>
+            </div>
           </div>
         </div>
         <div className="footer-bottom">
