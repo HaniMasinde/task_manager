@@ -5358,68 +5358,22 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
   .reminders-complete-button { min-height: 33px; gap: 4px; padding: 0 7px; font-size: .61rem; }
 }
 
-/* Page-specific ambient artwork. These transparent CSS layers stay behind content. */
-.landing-page {
-  background-image: radial-gradient(ellipse at 82% 13%, rgb(226 157 140 / 18%), transparent 32%), radial-gradient(ellipse at 12% 72%, rgb(169 151 191 / 13%), transparent 34%), radial-gradient(circle, rgb(139 112 151 / 9%) 1px, transparent 1.8px);
-  background-size: auto, auto, 28px 28px;
-}
-.home-workspace {
-  background-image: radial-gradient(ellipse at 88% 9%, rgb(184 147 194 / 15%), transparent 34%), radial-gradient(ellipse at 12% 92%, rgb(221 176 149 / 13%), transparent 36%);
-}
-.dashboard-page:not(.dashboard-page-embedded) {
-  background-image: radial-gradient(ellipse at 92% 8%, rgb(121 178 184 / 17%), transparent 34%), radial-gradient(ellipse at 5% 86%, rgb(153 164 207 / 13%), transparent 32%), repeating-linear-gradient(135deg, transparent 0 54px, rgb(91 130 146 / 3%) 55px 56px, transparent 57px 110px);
-}
-.task-page {
-  background-image: radial-gradient(ellipse at 4% 12%, rgb(231 155 133 / 15%), transparent 29%), radial-gradient(ellipse at 96% 76%, rgb(181 153 195 / 13%), transparent 32%), repeating-linear-gradient(0deg, transparent 0 43px, rgb(142 111 143 / 3%) 44px 45px);
-}
-.account-page {
-  background-image: radial-gradient(ellipse at 93% 14%, rgb(169 145 196 / 19%), transparent 31%), radial-gradient(ellipse at 7% 88%, rgb(225 169 158 / 13%), transparent 34%);
-}
-.calendar-page {
-  background-image: radial-gradient(ellipse at 92% 9%, rgb(102 181 185 / 16%), transparent 30%), radial-gradient(ellipse at 9% 85%, rgb(145 164 206 / 14%), transparent 32%), repeating-linear-gradient(0deg, transparent 0 47px, rgb(91 136 151 / 4%) 48px 49px), repeating-linear-gradient(90deg, transparent 0 47px, rgb(91 136 151 / 4%) 48px 49px);
-}
-.reminders-page {
-  background-image: radial-gradient(ellipse at 88% 8%, rgb(235 179 104 / 17%), transparent 30%), radial-gradient(ellipse at 8% 78%, rgb(172 147 198 / 15%), transparent 35%), radial-gradient(circle, rgb(164 133 176 / 9%) 1px, transparent 1.8px);
-  background-size: auto, auto, 31px 31px;
-}
-.about-page {
-  background-image: radial-gradient(ellipse at 5% 14%, rgb(222 149 143 / 16%), transparent 30%), radial-gradient(ellipse at 94% 80%, rgb(155 145 192 / 15%), transparent 34%), repeating-linear-gradient(145deg, transparent 0 66px, rgb(142 108 149 / 3%) 67px 68px, transparent 69px 132px);
-}
-.login-page {
-  background-image: radial-gradient(ellipse at 7% 12%, rgb(174 155 211 / 22%), transparent 35%), radial-gradient(ellipse at 95% 88%, rgb(138 181 205 / 17%), transparent 34%), repeating-linear-gradient(135deg, transparent 0 70px, rgb(103 111 157 / 4%) 71px 72px, transparent 73px 144px);
-}
-.register-page {
-  background-image: radial-gradient(ellipse at 90% 12%, rgb(113 184 164 / 19%), transparent 34%), radial-gradient(ellipse at 8% 87%, rgb(229 168 135 / 18%), transparent 35%), radial-gradient(circle, rgb(111 148 138 / 9%) 1px, transparent 1.8px);
-  background-size: auto, auto, 30px 30px;
-}
-
-:root[data-theme='dark'] .landing-page {
-  background-image: radial-gradient(ellipse at 82% 13%, rgb(156 91 100 / 22%), transparent 32%), radial-gradient(ellipse at 12% 72%, rgb(100 79 126 / 22%), transparent 34%), radial-gradient(circle, rgb(185 159 198 / 10%) 1px, transparent 1.8px);
-}
-:root[data-theme='dark'] .home-workspace {
-  background-image: radial-gradient(ellipse at 88% 9%, rgb(105 79 128 / 22%), transparent 34%), radial-gradient(ellipse at 12% 92%, rgb(128 82 76 / 17%), transparent 36%);
-}
-:root[data-theme='dark'] .dashboard-page:not(.dashboard-page-embedded) {
-  background-image: radial-gradient(ellipse at 92% 8%, rgb(53 112 120 / 21%), transparent 34%), radial-gradient(ellipse at 5% 86%, rgb(71 77 127 / 20%), transparent 32%), repeating-linear-gradient(135deg, transparent 0 54px, rgb(145 176 186 / 4%) 55px 56px, transparent 57px 110px);
-}
-:root[data-theme='dark'] .task-page {
-  background-image: radial-gradient(ellipse at 4% 12%, rgb(125 72 69 / 21%), transparent 29%), radial-gradient(ellipse at 96% 76%, rgb(87 67 105 / 22%), transparent 32%), repeating-linear-gradient(0deg, transparent 0 43px, rgb(187 153 178 / 4%) 44px 45px);
-}
-:root[data-theme='dark'] .account-page {
-  background-image: radial-gradient(ellipse at 93% 14%, rgb(91 70 120 / 25%), transparent 31%), radial-gradient(ellipse at 7% 88%, rgb(117 69 72 / 20%), transparent 34%);
-}
-:root[data-theme='dark'] .calendar-page {
-  background-image: radial-gradient(ellipse at 92% 9%, rgb(39 101 106 / 22%), transparent 30%), radial-gradient(ellipse at 9% 85%, rgb(64 74 123 / 22%), transparent 32%), repeating-linear-gradient(0deg, transparent 0 47px, rgb(142 180 188 / 5%) 48px 49px), repeating-linear-gradient(90deg, transparent 0 47px, rgb(142 180 188 / 5%) 48px 49px);
-}
-:root[data-theme='dark'] .reminders-page {
-  background-image: radial-gradient(ellipse at 88% 8%, rgb(129 88 39 / 22%), transparent 30%), radial-gradient(ellipse at 8% 78%, rgb(86 64 116 / 24%), transparent 35%), radial-gradient(circle, rgb(174 146 190 / 10%) 1px, transparent 1.8px);
-}
-:root[data-theme='dark'] .about-page {
-  background-image: radial-gradient(ellipse at 5% 14%, rgb(120 66 73 / 23%), transparent 30%), radial-gradient(ellipse at 94% 80%, rgb(71 66 116 / 24%), transparent 34%), repeating-linear-gradient(145deg, transparent 0 66px, rgb(186 152 194 / 4%) 67px 68px, transparent 69px 132px);
-}
-:root[data-theme='dark'] .login-page {
-  background-image: radial-gradient(ellipse at 7% 12%, rgb(79 64 119 / 29%), transparent 35%), radial-gradient(ellipse at 95% 88%, rgb(44 83 111 / 24%), transparent 34%), repeating-linear-gradient(135deg, transparent 0 70px, rgb(151 146 199 / 5%) 71px 72px, transparent 73px 144px);
-}
-:root[data-theme='dark'] .register-page {
-  background-image: radial-gradient(ellipse at 90% 12%, rgb(39 98 78 / 24%), transparent 34%), radial-gradient(ellipse at 8% 87%, rgb(118 73 46 / 23%), transparent 35%), radial-gradient(circle, rgb(139 188 169 / 10%) 1px, transparent 1.8px);
+/* Shared transparent galaxy and constellation artwork for page and footer backgrounds. */
+:root { --shared-page-art: url('/galaxy-web-light.svg'); }
+:root[data-theme='dark'] { --shared-page-art: url('/galaxy-web-light.svg'); }
+.landing-page,
+.home-workspace,
+.dashboard-page:not(.dashboard-page-embedded),
+.task-page,
+.account-page,
+.calendar-page,
+.reminders-page,
+.about-page,
+.login-page,
+.register-page,
+.app-footer {
+  background-image: var(--shared-page-art);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
