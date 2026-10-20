@@ -1,6 +1,5 @@
 import {
   FaFacebookF,
-  FaGithub,
   FaInstagram,
   FaTiktok,
   FaWhatsapp,
@@ -11,9 +10,8 @@ import { Link } from 'react-router-dom'
 const socialLinks = [
   { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61592740528794', icon: FaFacebookF },
   { label: 'WhatsApp', href: 'https://wa.me/254102678336', icon: FaWhatsapp },
-  { label: 'Instagram', href: 'https://www.instagram.com/haningtone_caroline?obrf=cmZvemFrYXJrd2po', icon: FaInstagram },
+  { label: 'Instagram', href: 'https://www.instagram.com/haningtone_caroline/', icon: FaInstagram },
   { label: 'Tiktok', href: 'https://tiktok.com/@wuod_atieno01', icon: FaTiktok },
-  { label: 'GitHub', href: 'https://github.com/', icon: FaGithub },
 ]
 
 function SiteFooter() {
@@ -45,10 +43,10 @@ function SiteFooter() {
                   <Icon aria-hidden="true" />
                 </a>
               ))}
-              <a className="footer-social-link footer-social-phone" href="tel:0113745958" aria-label="Call" title="Call" data-tooltip="Call">
+              <a className="footer-social-link footer-social-phone" href="tel:0113745958" aria-label="Call Wuod Atieno at 0113745958" title="Call 0113745958" data-tooltip="Call">
                 <FiPhone aria-hidden="true" />
               </a>
-              <a className="footer-social-link footer-social-message" href="sms:0794358892" aria-label="Message" title="Message" data-tooltip="Message">
+              <a className="footer-social-link footer-social-message" href="sms:0794358892" aria-label="Send an SMS to Wuod Atieno at 0794358892" title="SMS 0794358892" data-tooltip="Message">
                 <FiMessageCircle aria-hidden="true" />
               </a>
             </nav>

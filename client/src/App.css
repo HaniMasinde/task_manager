@@ -493,19 +493,6 @@
   line-height: 1.65;
 }
 
-.app-footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 14px 28px;
-  padding: 24px 7%;
-  border-top: 1px solid var(--border);
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  text-align: center;
-}
-
 .footer-socials {
   display: flex;
   align-items: center;
@@ -570,12 +557,6 @@
 .footer-social-instagram {
   border-color: transparent;
   background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
-  color: #fff;
-}
-
-.footer-social-linkedin {
-  border-color: transparent;
-  background: #0a66c2;
   color: #fff;
 }
 
@@ -656,7 +637,7 @@ a.footer-social-link:hover {
 }
 
 /* Footer layout and more legible icon targets */
-.app-footer { justify-content: center; padding: 0 max(6%, calc((100vw - 1240px) / 2)); border-top: 1px solid #e9e3df; background: #f5f1ee; text-align: left; }
+.app-footer { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px 28px; padding: 0 max(6%, calc((100vw - 1240px) / 2)); border-top: 1px solid #e9e3df; background: #f5f1ee; color: var(--text-muted); font-size: 0.85rem; text-align: left; }
 .footer-inner { width: 100%; max-width: 1240px; }
 .footer-main { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 32px 0 26px; }
 .footer-brand-block { max-width: 390px; }
@@ -676,7 +657,6 @@ a.footer-social-link:hover {
 .landing-page .feature-icon { width: 46px; height: 46px; font-size: 1.35rem; }
 .landing-page .preview-icon { width: 46px; height: 46px; font-size: 1.32rem; }
 .landing-page .feature-card h3 { margin-top: 15px; }
-:root[data-theme='dark'] .app-footer { border-color: #302f40; background: #111521; }
 :root[data-theme='dark'] .footer-bottom { border-color: #302f40; color: #aaa4b1; }
 :root[data-theme='dark'] .footer-bottom a { color: #d1cbd6; }
 :root[data-theme='dark'] .footer-bottom a:hover { color: #e5a39a; }
@@ -3180,7 +3160,6 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 .auth-card::before { background: linear-gradient(90deg, #725b82, #b87878 68%, #9a8cb5); }
 .auth-card .primary-button { background: linear-gradient(100deg, #62506f, #806b91); }
 .auth-card .primary-button:hover:not(:disabled) { background: linear-gradient(100deg, #51415f, #705d81); }
-.app-footer { background: #f1edf1; }
 :root[data-theme='dark'] .task-page,
 :root[data-theme='dark'] .dashboard-page,
 :root[data-theme='dark'] .account-page,
@@ -3232,7 +3211,6 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 :root[data-theme='dark'] .landing-page .welcome-actions .primary-button,
 :root[data-theme='dark'] .landing-bottom-cta .primary-button,
 :root[data-theme='dark'] .auth-card .primary-button { background: linear-gradient(100deg, #766288, #8b7597); }
-:root[data-theme='dark'] .app-footer { border-color: var(--border); background: #171621; }
 @media (max-width: 620px) {
   .dashboard-page { background: var(--brand-canvas); }
   :root[data-theme='dark'] .dashboard-page { background: #11121c; }
