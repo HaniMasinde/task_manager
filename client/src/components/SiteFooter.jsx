@@ -2,17 +2,17 @@ import {
   FaFacebookF,
   FaGithub,
   FaInstagram,
-  FaLinkedinIn,
+  FaTiktok,
   FaWhatsapp,
 } from 'react-icons/fa'
 import { FiMessageCircle, FiPhone } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 
 const socialLinks = [
-  { label: 'Facebook', href: 'https://www.facebook.com/', icon: FaFacebookF },
+  { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61592740528794', icon: FaFacebookF },
   { label: 'WhatsApp', href: 'https://wa.me/254102678336', icon: FaWhatsapp },
-  { label: 'Instagram', href: 'https://www.instagram.com/', icon: FaInstagram },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/', icon: FaLinkedinIn },
+  { label: 'Instagram', href: 'https://www.instagram.com/haningtone_caroline?obrf=cmZvemFrYXJrd2po', icon: FaInstagram },
+  { label: 'Tiktok', href: 'https://tiktok.com/@wuod_atieno01', icon: FaTiktok },
   { label: 'GitHub', href: 'https://github.com/', icon: FaGithub },
 ]
 
