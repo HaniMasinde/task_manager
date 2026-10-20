@@ -1,6 +1,6 @@
 
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/useAuth.js'
 import {
@@ -13,6 +13,7 @@ import {
   FiArrowRight,
   FiBarChart2,
   FiClock,
+  FiCopy,
   FiEdit3,
   FiFileText,
   FiFlag,
@@ -28,6 +29,7 @@ import {
   FiZap,
   FiPause,
   FiPlay,
+  FiPieChart,
   FiPlus,
   FiRotateCcw,
   FiCoffee,
@@ -83,8 +85,18 @@ function formatTimer(seconds) {
   return `${minutes}:${remainder}`
 }
 
+function readFocusPlan(key) {
+  try {
+    const savedPlan = JSON.parse(localStorage.getItem(key) || '[]')
+    return Array.isArray(savedPlan) ? savedPlan.map(String) : []
+  } catch {
+    return []
+  }
+}
+
 function HomePage({ theme, onToggleTheme }) {
   const { user, loading, logout } = useAuth()
+  const focusPlanKey = `task-manager-focus-plan:${user?.id || user?.email || user?.username || 'guest'}`
   const location = useLocation()
   const navigate = useNavigate()
   const [loggingOut, setLoggingOut] = useState(false)
@@ -93,11 +105,13 @@ function HomePage({ theme, onToggleTheme }) {
   const [timerMode, setTimerMode] = useState('focus')
   const [secondsLeft, setSecondsLeft] = useState(30 * 60)
   const [focusMinutes, setFocusMinutes] = useState(30)
-  const [plannedTaskIds, setPlannedTaskIds] = useState([])
+  const [focusPlanState, setFocusPlanState] = useState(() => ({ key: focusPlanKey, ids: readFocusPlan(focusPlanKey) }))
+  const plannedTaskIds = focusPlanState.key === focusPlanKey ? focusPlanState.ids : readFocusPlan(focusPlanKey)
   const [focusTaskToAdd, setFocusTaskToAdd] = useState('')
-  const [timerRunning, setTimerRunning] = useState(false)
+  const [timerState, setTimerState] = useState(() => ({ key: focusPlanKey, running: false }))
+  const timerRunning = timerState.key === focusPlanKey && timerState.running
+  const setTimerRunning = useCallback((running) => setTimerState({ key: focusPlanKey, running }), [focusPlanKey])
   const [homeTasks, setHomeTasks] = useState([])
-  const [focusHistory, setFocusHistory] = useState([])
   const [tasksLoading, setTasksLoading] = useState(true)
   const [tasksError, setTasksError] = useState('')
   const [quickTaskTitle, setQuickTaskTitle] = useState('')
@@ -109,16 +123,12 @@ function HomePage({ theme, onToggleTheme }) {
   const [intention, setIntention] = useState(() => {
     try { return localStorage.getItem('task-manager-daily-intention') || '' } catch { return '' }
   })
-  const focusPlanKey = `task-manager-focus-plan:${user?.id || user?.email || user?.username || 'guest'}`
 
-  useEffect(() => {
-    try {
-      const savedPlan = JSON.parse(localStorage.getItem(focusPlanKey) || '[]')
-      setPlannedTaskIds(Array.isArray(savedPlan) ? savedPlan.map(String) : [])
-    } catch {
-      setPlannedTaskIds([])
-    }
-    setTimerRunning(false)
+  const setPlannedTaskIds = useCallback((update) => {
+    const currentIds = readFocusPlan(focusPlanKey)
+    const nextIds = typeof update === 'function' ? update(currentIds) : update
+    setFocusPlanState({ key: focusPlanKey, ids: nextIds })
+    try { localStorage.setItem(focusPlanKey, JSON.stringify(nextIds)) } catch { /* Keep the plan for this session. */ }
   }, [focusPlanKey])
 
   useEffect(() => {
@@ -134,9 +144,7 @@ function HomePage({ theme, onToggleTheme }) {
           setHomeTasks(tasks)
           const pendingIds = new Set(tasks.filter((task) => task.status !== 'completed').map((task) => String(task.id)))
           setPlannedTaskIds((current) => {
-            const nextIds = current.filter((id) => pendingIds.has(id))
-            try { localStorage.setItem(focusPlanKey, JSON.stringify(nextIds)) } catch { /* Keep the plan for this session. */ }
-            return nextIds
+            return current.filter((id) => pendingIds.has(id))
           })
           setTasksError('')
         }
@@ -149,12 +157,10 @@ function HomePage({ theme, onToggleTheme }) {
 
     loadHomeTasks()
     return () => { active = false }
-  }, [user, focusPlanKey])
+  }, [user, focusPlanKey, setPlannedTaskIds])
 
-  useEffect(() => {
-    const userId = user?.id || user?.email || user?.username
-    setFocusHistory(getFocusHistory(userId))
-  }, [user])
+  const userId = user?.id || user?.email || user?.username
+  const focusHistory = useMemo(() => getFocusHistory(userId), [userId])
 
   useEffect(() => {
     if (location.pathname !== '/' || location.hash !== '#weekly-focus' || loading || !user) return undefined
@@ -177,7 +183,7 @@ function HomePage({ theme, onToggleTheme }) {
       })
     }, 1000)
     return () => window.clearInterval(interval)
-  }, [timerRunning])
+  }, [timerRunning, setTimerRunning])
 
   function selectTimerMode(mode) {
     setTimerMode(mode)
@@ -188,7 +194,6 @@ function HomePage({ theme, onToggleTheme }) {
   function saveFocusPlan(nextIds) {
     const normalizedIds = nextIds.map(String)
     setPlannedTaskIds(normalizedIds)
-    try { localStorage.setItem(focusPlanKey, JSON.stringify(normalizedIds)) } catch { /* Keep the plan for this session. */ }
   }
 
   function addTaskToFocusPlan() {
@@ -332,6 +337,8 @@ function HomePage({ theme, onToggleTheme }) {
           <div className="home-sidebar-nav home-sidebar-upcoming" role="list" aria-label="Planned features">
             <div className="home-sidebar-upcoming-item" role="listitem" title="Projects is planned for a future update"><FiFolder aria-hidden="true" /><span>Projects</span><small>Soon</small></div>
             <div className="home-sidebar-upcoming-item" role="listitem" title="Notes is planned for a future update"><FiFileText aria-hidden="true" /><span>Notes</span><small>Soon</small></div>
+            <div className="home-sidebar-upcoming-item" role="listitem" title="Templates is planned for a future update"><FiCopy aria-hidden="true" /><span>Templates</span><small>Soon</small></div>
+            <div className="home-sidebar-upcoming-item" role="listitem" title="Reports is planned for a future update"><FiPieChart aria-hidden="true" /><span>Reports</span><small>Soon</small></div>
           </div>
           <div className="home-sidebar-bottom">
             <Link className="home-sidebar-profile" to="/account" onClick={() => setSidebarOpen(false)}>
