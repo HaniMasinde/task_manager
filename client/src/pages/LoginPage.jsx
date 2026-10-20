@@ -40,7 +40,7 @@ function LoginPage() {
   }
 
   return (
-    <main className="auth-page">
+    <main className="auth-page login-page">
       <div className="auth-shell">
       <Link className="auth-brand" to="/" aria-label="Wuod Atieno home"><span className="brand-mark" aria-hidden="true">W</span><span>Wuod Atieno</span></Link>
       <div className="auth-layout">
