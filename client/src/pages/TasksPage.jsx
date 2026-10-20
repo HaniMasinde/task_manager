@@ -66,6 +66,7 @@ function TasksPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [priorityFilter, setPriorityFilter] = useState('')
+  const [dateFilter, setDateFilter] = useState('')
 
   const [tasks, setTasks] = useState([])
   const [tasksLoading, setTasksLoading] = useState(true)
@@ -73,6 +74,10 @@ function TasksPage() {
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [deleteError, setDeleteError] = useState('')
   const [deletingTask, setDeletingTask] = useState(false)
+
+  const visibleTasks = dateFilter
+    ? tasks.filter((task) => String(task.due_date || '').slice(0, 10) === dateFilter)
+    : tasks
 
   
   useEffect(() => {
@@ -421,6 +426,14 @@ function TasksPage() {
             <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
+
+          <label htmlFor="date-filter">Filter by due date</label>
+          <input
+            id="date-filter"
+            type="date"
+            value={dateFilter}
+            onChange={(event) => setDateFilter(event.target.value)}
+          />
           <button
             type="button"
             className="secondary-button"
@@ -428,6 +441,7 @@ function TasksPage() {
               setSearch('')
               setStatusFilter('')
               setPriorityFilter('')
+              setDateFilter('')
             }}
           >
             Clear Filters
@@ -445,22 +459,22 @@ function TasksPage() {
 
           {!tasksLoading && !error && (
             <p role="status">
-              Tasks displayed: {tasks.length}
+              Tasks displayed: {visibleTasks.length}
             </p>
           )}
 
-          {!tasksLoading && !error && tasks.length === 0 && (
+          {!tasksLoading && !error && visibleTasks.length === 0 && (
             <p>
-              {search || statusFilter || priorityFilter
+              {search || statusFilter || priorityFilter || dateFilter
                 ? 'No tasks match found.'
                 : 'You have no tasks yet.'}
             </p>
           )}
 
 
-          {!tasksLoading && tasks.length > 0 && (
+          {!tasksLoading && visibleTasks.length > 0 && (
             <ul className="task-list">
-              {tasks.map((task) => {
+              {visibleTasks.map((task) => {
                 const statusChip = getTaskStatusChip(task)
                 return (
                 <li className="task-item" key={task.id}>
