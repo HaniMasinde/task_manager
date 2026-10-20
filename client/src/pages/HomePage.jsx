@@ -14,7 +14,9 @@ import {
   FiBarChart2,
   FiClock,
   FiEdit3,
+  FiFileText,
   FiFlag,
+  FiFolder,
   FiList,
   FiMoon,
   FiLogOut,
@@ -326,6 +328,11 @@ function HomePage({ theme, onToggleTheme }) {
             <Link className={location.pathname === '/account' ? 'is-active' : undefined} to="/account" aria-current={location.pathname === '/account' ? 'page' : undefined} title="Account settings" onClick={() => setSidebarOpen(false)}><FiSettings aria-hidden="true" /><span>Account settings</span></Link>
             <Link className={location.pathname === '/about' ? 'is-active' : undefined} to="/about" aria-current={location.pathname === '/about' ? 'page' : undefined} title="About & guide" onClick={() => setSidebarOpen(false)}><FiBookOpen aria-hidden="true" /><span>About &amp; guide</span></Link>
           </nav>
+          <div className="home-sidebar-section-label">Coming soon</div>
+          <div className="home-sidebar-nav home-sidebar-upcoming" role="list" aria-label="Planned features">
+            <div className="home-sidebar-upcoming-item" role="listitem" title="Projects is planned for a future update"><FiFolder aria-hidden="true" /><span>Projects</span><small>Soon</small></div>
+            <div className="home-sidebar-upcoming-item" role="listitem" title="Notes is planned for a future update"><FiFileText aria-hidden="true" /><span>Notes</span><small>Soon</small></div>
+          </div>
           <div className="home-sidebar-bottom">
             <Link className="home-sidebar-profile" to="/account" onClick={() => setSidebarOpen(false)}>
               {user.profile_picture

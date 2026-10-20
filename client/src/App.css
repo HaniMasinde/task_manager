@@ -2858,8 +2858,11 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 }
 
 /* Gentle landing page motion and interaction feedback */
+.landing-page .landing-header { animation: landing-copy-enter 460ms cubic-bezier(.2,.75,.25,1) both; }
 .landing-page .welcome-copy { animation: landing-copy-enter 650ms cubic-bezier(.2,.75,.25,1) both; }
 .landing-page .landing-visual { animation: landing-visual-enter 760ms 100ms cubic-bezier(.2,.75,.25,1) both; }
+.landing-page .features-intro { animation: landing-copy-enter 560ms 120ms cubic-bezier(.2,.75,.25,1) both; }
+.landing-page .landing-bottom-cta { animation: landing-visual-enter 620ms 180ms cubic-bezier(.2,.75,.25,1) both; }
 .landing-page .landing-float-card { animation: landing-float 4.5s 900ms ease-in-out infinite; }
 .landing-page .feature-card { animation: landing-card-enter 520ms both; }
 .landing-page .feature-card:nth-child(2) { animation-delay: 70ms; }
@@ -3362,6 +3365,10 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 .home-sidebar-nav a:hover,
 .home-sidebar-nav a.is-active { background: #eee7f1; color: #624e72; }
 .home-sidebar-nav a.is-active { box-shadow: inset 3px 0 #b87878; }
+.home-sidebar-upcoming { margin-top: 0; }
+.home-sidebar-upcoming-item { display: flex; min-height: 38px; align-items: center; gap: 11px; padding: 0 11px; border-radius: 10px; color: #908795; font-size: 0.77rem; }
+.home-sidebar-upcoming-item > svg { width: 18px; flex: 0 0 auto; font-size: 1rem; }
+.home-sidebar-upcoming-item small { margin-left: auto; padding: 3px 6px; border: 1px solid #eee7f0; border-radius: 99px; color: #918698; font-size: 0.56rem; font-weight: 700; text-transform: uppercase; }
 .home-sidebar-nav a:focus-visible,
 .home-sidebar-brand:focus-visible,
 .home-sidebar-profile:focus-visible,
@@ -3390,6 +3397,8 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 :root[data-theme='dark'] .home-sidebar-nav a { color: #d0c8d5; }
 :root[data-theme='dark'] .home-sidebar-nav a:hover,
 :root[data-theme='dark'] .home-sidebar-nav a.is-active { background: #393143; color: #d0b8df; }
+:root[data-theme='dark'] .home-sidebar-upcoming-item { color: #9f95a6; }
+:root[data-theme='dark'] .home-sidebar-upcoming-item small { border-color: #48404d; color: #a99daf; }
 :root[data-theme='dark'] .home-sidebar-profile { border-color: #383341; color: #e8e0eb; }
 :root[data-theme='dark'] .home-sidebar-profile img,
 :root[data-theme='dark'] .home-sidebar-avatar-fallback { background: #393044; color: #d4c0e0; }
@@ -3701,6 +3710,7 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 /* Home page motion: gentle entrances, a lively brand mark, and a calm timer pulse. */
 .home-portal-header { animation: home-enter-up 460ms cubic-bezier(.2,.75,.25,1) both; }
 .home-focus-hero { animation: home-enter-up 560ms cubic-bezier(.2,.75,.25,1) 70ms both; }
+.home-plan-card { animation: home-enter-up 600ms cubic-bezier(.2,.75,.25,1) 120ms both; }
 .home-focus-card { animation: home-enter-up 600ms cubic-bezier(.2,.75,.25,1) 140ms both; }
 .home-intention-card { animation: home-enter-up 600ms cubic-bezier(.2,.75,.25,1) 220ms both; }
 .home-focus-tip { animation: home-enter-up 600ms cubic-bezier(.2,.75,.25,1) 300ms both; }
@@ -3750,6 +3760,7 @@ html[data-theme='dark'] .task-sidebar-user-fallback { background: #644453; color
 @media (prefers-reduced-motion: reduce) {
   .home-portal-header,
   .home-focus-hero,
+  .home-plan-card,
   .home-focus-card,
   .home-intention-card,
   .home-focus-tip,
